@@ -67,7 +67,6 @@ function draw(event) {
     const _y = startY;
 
     if (isDrawing) {
-
         // Draw a line from the last position to the current position.
         context.beginPath();
         context.moveTo(startX, startY);
@@ -117,6 +116,7 @@ function handleResize() {
     console.log(canvas.width);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    // console.log(drawnArray);
 
     for (let i = 0; i < drawnArray.length; i++) {
         for (let j = 0; j < drawnArray[i].length; j++) {
@@ -137,16 +137,20 @@ canvas.addEventListener('wheel', (event) => {
     // console.log(scaleFactor);
 
     if (zoomOut) {
-        if (scaleFactor < 2)
+        if (scaleFactor < 3)
             scaleFactor += zoomSpeed;
     } else {
         if (scaleFactor > 0.7)
             scaleFactor -= zoomSpeed;
     }
 
+    // [startX, startY] = adjustCoordinates(event.clientX, event.clientY);
+    // context.setTransform(scaleFactor, 0, 0, scaleFactor, 0, 0);
+
     if (scaleFactor > 1) {
-        canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * .5 - 6}px`;
-        canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * .5 - 8}px`;
+        canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * .5}px`;
+        canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * .5}px`;
+        // canvas.style.marginLeft = `${100}px`;
     }
     else if (scaleFactor <= 1) {
         canvas.style.marginTop = `${0}px`;
@@ -160,6 +164,8 @@ window.addEventListener('dblclick', () => {
     scaleFactor = 1.0;
     console.log("jhvhj");
     canvas.style.transform = `scale(${scaleFactor})`;
+
+    // context.setTransform(1, 0, 0, 1, 0, 0);
 });
 
 function adjustCoordinates(x, y) {
@@ -168,19 +174,27 @@ function adjustCoordinates(x, y) {
     const rect = canvas.getBoundingClientRect();
 
     // Adjust coordinates based on canvas position and zoom factor
-    x -= rect.left;
-    y -= rect.top;
+    // console.log(rect);
+    if (rect.left >= 0) {
+        x -= rect.left;
+        y -= rect.top;
 
-    x /= scaleFactor;
-    y /= scaleFactor;
+        x /= scaleFactor;
+        y /= scaleFactor;
+    }
+    else {
+        x -= rect.left;
+        y -= rect.top;
 
-    if (rect.left < 0) {
+        x /= scaleFactor;
+        y /= scaleFactor;
+
         x += x * 0.025;
         y += y * 0.025;
     }
+
     return [x, y];
 }
-
 document.addEventListener('click', (event) => { console.log(event.clientX + " " + event.clientY), console.log(scaleFactor) });
 
 // Add event listeners for drawing
