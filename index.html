@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="min-h-screen min-w-full">
+
+        <aside class="fixed z-10 top-1/2 -translate-y-1/2 left-4 flex flex-col justify-center 
+            gap-5 py-5 px-3 rounded-full bg-blue-400 text-white">
+            <button onclick="changeHandler(this)" change>kjbj
+            </button>
+            <button><i class="fa-solid fa-pen"></i></button>
+            <button><i class="fa-solid fa-eraser"></i></button>
+            <button><i class="fa-solid fa-shapes"></i></button>
+            <button><i class="fa-solid fa-pen-ruler"></i></button>
+            <button><i class="fa-solid fa-paint-roller"></i></button>
+            <button><i class="fa-solid fa-notes-medical"></i></button>
+        </aside>
+
+        <!-- <div class="bg-gray-400 w-full" for-canvas> -->
+        <canvas onclick="changeHandler(this)" class="relative bg-gray-400 w-full h-full scale-100">
+        </canvas>
+        <!-- </div> -->
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://kit.fontawesome.com/848e0df24d.js" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
