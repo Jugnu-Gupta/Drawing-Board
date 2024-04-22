@@ -29,7 +29,7 @@ const zoomSpeed = 0.1;
 
 function shapeHandler(_shape) {
     shape = _shape;
-    console.log(shape);
+    // console.log(shape);
 }
 
 // Function to start drawing
@@ -58,6 +58,8 @@ function draw(event) {
     const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
 
     if (isDrawing) {
+        const [prevX, prevY] = [startX, startY];
+
         // Draw a line from the last position to the current position.
         context.beginPath();
         context.moveTo(startX, startY);
@@ -66,7 +68,7 @@ function draw(event) {
 
         // store path.
         const len = drawnArray.length;
-        drawnArray[len - 1].push({ startX: startX, startY: startX, endX: curX, endY: curY, shape: "pen" });
+        drawnArray[len - 1].push({ startX: prevX, startY: prevY, endX: curX, endY: curY, shape: "pen" });
     }
     else if (isDragging) {
         const translateX = (startX - curX);
@@ -85,7 +87,8 @@ function draw(event) {
     }
 
     // Update the last position.
-    [startX, startY] = [curX, curY];
+    startX = curX;
+    startY = curY;
 }
 
 // Function to stop drawing
@@ -95,8 +98,8 @@ function stopDrawing() {
 }
 
 function resizeHandler() {
-    // const width = canvas.width;
-    // const height = canvas.height;
+    const ratioWeight = window.innerWidth / canvas.width;
+    const ratioHeight = window.innerHeight / canvas.height;
 
     // console.log(canvas.width);
     canvas.width = window.innerWidth;
@@ -106,6 +109,11 @@ function resizeHandler() {
         for (let j = 0; j < drawnArray[i].length; j++) {
 
             // console.log(drawnArray[i][j]);
+            drawnArray[i][j].startX *= ratioWeight;
+            drawnArray[i][j].endX *= ratioWeight;
+            drawnArray[i][j].startY *= ratioHeight;
+            drawnArray[i][j].endY *= ratioHeight;
+
             context.beginPath();
             context.moveTo(drawnArray[i][j].startX, drawnArray[i][j].startY);
             context.lineTo(drawnArray[i][j].endX, drawnArray[i][j].endY);
