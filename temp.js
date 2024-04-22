@@ -76,13 +76,13 @@ function draw(event) {
         drawnArray[len - 1].push({ startX: _x, startY: _y, endX: x, endY: y, shape: "pen" });
     }
     else if (isDragging) {
-        let translateX = _x - x;
-        let translateY = _y - y;
+        const translateX = _x - x;
+        const translateY = _y - y;
 
-        topOffset = Math.min(canvas.width, Math.max(0, topOffset + translateX));
-        leftOffset = Math.min(canvas.width, Math.max(0, leftOffset + translateY));
+        leftOffset = Math.min(canvas.width, Math.max(0, leftOffset + translateX));
+        topOffset = Math.min(canvas.height, Math.max(0, topOffset + translateY));
 
-        window.scrollTo(topOffset, leftOffset);
+        window.scrollTo(leftOffset, topOffset);
 
         printCoordinates(leftOffset, topOffset);
         // printCoordinates(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
