@@ -15,9 +15,6 @@ let drawnArray = [];
 let isDragging = false;
 let shape = "pen";
 
-let leftOffset = 0;
-let topOffset = 0;
-
 // Zooming
 let scaleFactor = 1.0;
 const zoomSpeed = 0.1;
@@ -26,9 +23,9 @@ const zoomSpeed = 0.1;
 //     document.querySelector("[change]").innerHTML = `${canvas.width}x${canvas.height} : ${event.clientX || 0}x${event.clientY || 0}`;
 // }
 
-function printCoordinates(x, y) {
-    document.querySelector("[change]").innerHTML = `${parseInt(x)}x${parseInt(y)}`;
-}
+// function printCoordinates(x, y) {
+//     document.querySelector("[change]").innerHTML = `${parseInt(x)}x${parseInt(y)}`;
+// }
 
 function shapeHandler(_shape) {
     shape = _shape;
@@ -42,7 +39,8 @@ function startDrawing(event) {
         isDrawing = true;
         isDragging = false;
 
-        const len = drawnArray.length;
+        // create empty array in drawnArray to store current move/drawning.
+        // const len = drawnArray.length;
         drawnArray.push([]);
     }
     else if (shape === "hand") {
@@ -57,43 +55,37 @@ function draw(event) {
     if (!isDrawing && !isDragging) return;
 
     // Get the current mouse position
-    const [x, y] = adjustCoordinates(event.clientX, event.clientY);
-
-    // changeHandler(event);
-    const _x = startX;
-    const _y = startY;
+    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
 
     if (isDrawing) {
-
         // Draw a line from the last position to the current position.
         context.beginPath();
         context.moveTo(startX, startY);
-        context.lineTo(x, y);
+        context.lineTo(curX, curY);
         context.stroke();
 
         // store path.
         const len = drawnArray.length;
-        drawnArray[len - 1].push({ startX: _x, startY: _y, endX: x, endY: y, shape: "pen" });
+        drawnArray[len - 1].push({ startX: startX, startY: startX, endX: curX, endY: curY, shape: "pen" });
     }
     else if (isDragging) {
-        const translateX = _x - x;
-        const translateY = _y - y;
+        const translateX = (startX - curX);
+        const translateY = (startY - curY);
 
-        leftOffset = Math.min(canvas.width, Math.max(0, leftOffset + translateX));
-        topOffset = Math.min(canvas.height, Math.max(0, topOffset + translateY));
+        window.scrollBy({
+            left: translateX,
+            top: translateY,
+            behavior: 'auto'
+        });
 
-        window.scrollTo(leftOffset, topOffset);
+        // printCoordinates(0, 0);
 
-        printCoordinates(leftOffset, topOffset);
-        // printCoordinates(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
-
-        // drag
-        // document.querySelector('canvas').style.transform = `translate(${translateX}px, ${translateY}px)`;
-        // document.querySelector('canvas').style.transition = `5ms all`;
+        // bug: code working properly when undefined function is called. 
+        xyz();
     }
 
     // Update the last position.
-    [startX, startY] = [x, y];
+    [startX, startY] = [curX, curY];
 }
 
 // Function to stop drawing
@@ -102,11 +94,11 @@ function stopDrawing() {
     isDragging = false;
 }
 
-function handleResize() {
+function resizeHandler() {
     // const width = canvas.width;
     // const height = canvas.height;
 
-    console.log(canvas.width);
+    // console.log(canvas.width);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -123,8 +115,7 @@ function handleResize() {
     }
 }
 
-canvas.addEventListener('wheel', (event) => {
-
+function zoomHandler(event) {
     const zoomOut = event.deltaY < 0;
     // console.log(scaleFactor);
 
@@ -137,22 +128,17 @@ canvas.addEventListener('wheel', (event) => {
     }
 
     if (scaleFactor > 1) {
-        canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * .5 - 6}px`;
-        canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * .5 - 8}px`;
+        canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * .5 - 4 * scaleFactor}px`;
+        canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * .5 - 4 * scaleFactor}px`;
     }
     else if (scaleFactor <= 1) {
         canvas.style.marginTop = `${0}px`;
         canvas.style.marginLeft = `${0}px`;
     }
     canvas.style.transform = `scale(${scaleFactor})`;
-});
+}
 
-// Reset zoom
-window.addEventListener('dblclick', () => {
-    scaleFactor = 1.0;
-    console.log("jhvhj");
-    canvas.style.transform = `scale(${scaleFactor})`;
-});
+
 
 function adjustCoordinates(x, y) {
     // getBoundingClientRect method providing information about the size of an element and its position 
@@ -160,11 +146,8 @@ function adjustCoordinates(x, y) {
     const rect = canvas.getBoundingClientRect();
 
     // Adjust coordinates based on canvas position and zoom factor
-    x -= rect.left;
-    y -= rect.top;
-
-    x /= scaleFactor;
-    y /= scaleFactor;
+    x = (x - rect.left) / scaleFactor;
+    y = (y - rect.top) / scaleFactor;
 
     if (rect.left < 0) {
         x += x * 0.025;
@@ -173,11 +156,20 @@ function adjustCoordinates(x, y) {
     return [x, y];
 }
 
+function resetZoomHandler() {
+    scaleFactor = 1.0;
+    // console.log("jhvhj");
+    canvas.style.transform = `scale(${scaleFactor})`;
+}
+
 document.addEventListener('click', (event) => { console.log(event.clientX + " " + event.clientY), console.log(scaleFactor) });
 
 // Add event listeners for drawing
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
-window.addEventListener('resize', handleResize);
 canvas.addEventListener('mouseout', stopDrawing);
+
+window.addEventListener('resize', resizeHandler);
+window.addEventListener('dblclick', resetZoomHandler);
+canvas.addEventListener('wheel', zoomHandler);
