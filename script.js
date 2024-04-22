@@ -6,20 +6,17 @@ const context = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// window.onbeforeunload = function () {
-//     window.scrollTo(0, 0);
-// }
-
 // Variables to track the drawing state
 let isDrawing = false;
 let startX = 0;
 let startY = 0;
 let lineWidth = 5;
 let drawnArray = [];
-let translateX = 0;
-let translateY = 0;
 let isDragging = false;
 let shape = "pen";
+
+let leftOffset = 0;
+let topOffset = 0;
 
 // Zooming
 let scaleFactor = 1.0;
@@ -79,25 +76,20 @@ function draw(event) {
         drawnArray[len - 1].push({ startX: _x, startY: _y, endX: x, endY: y, shape: "pen" });
     }
     else if (isDragging) {
-        const rect = canvas.getBoundingClientRect();
+        let translateX = _x - x;
+        let translateY = _y - y;
 
-        translateX = _x - x;
-        translateY = _y - y;
+        topOffset = Math.min(canvas.width, Math.max(0, topOffset + translateX * scaleFactor));
+        leftOffset = Math.min(canvas.width, Math.max(0, leftOffset + translateY * scaleFactor));
 
-        // let coordX = canvas.width / scaleFactor;
-        // let coordY = canvas.height / scaleFactor;
-        let coordX = _x - canvas.width / 2;
-        let coordY = _y - canvas.height / 2;
-        // let coordX =  rect.left - canvas.width / 2;
-        // let coordY = rect.top - canvas.height / 2;
+        window.scrollTo(topOffset, leftOffset);
 
-        window.scrollTo(coordX, coordY);
-
-        printCoordinates(coordX, coordY);
+        printCoordinates(leftOffset, topOffset);
+        // printCoordinates(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
 
         // drag
         // document.querySelector('canvas').style.transform = `translate(${translateX}px, ${translateY}px)`;
-        // document.querySelector('canvas').style.transition = `500ms all`;
+        // document.querySelector('canvas').style.transition = `5ms all`;
     }
 
     // Update the last position.
