@@ -6,28 +6,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="main.css">
     <title>Document</title>
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .example::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .example {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .slideDown {
+            /* display: flex; */
+            animation: downMovement 200ms ease-in-out forwards;
+        }
+
+        @keyframes downMovement {
+            from {
+                transform: scaleY(0);
+            }
+
+            to {
+                transform: scaleY(1);
+                top: 175%;
+            }
+        }
+
+        .slideUp {
+            /* display: hidden; */
+            animation: upMovement 200ms ease-in-out forwards;
+        }
+
+        @keyframes upMovement {
+            from {
+                top: 175%;
+                transform: scaleY(1);
+            }
+
+            to {
+                transform: scaleY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="min-h-screen min-w-full">
+    <!-- <div class="h-[100vh] w-full bg-red-100 flex justify-center"> -->
+    <div class="h-[100vh] w-full bg-red-100">
 
-        <aside class="fixed z-10 top-1/2 -translate-y-1/2 left-4 flex flex-col justify-center 
-            gap-5 py-5 px-3 rounded-full bg-blue-400 text-white ">
+        <aside class="fixed z-10 top-4 left-1/2 -translate-x-1/2 flex justify-center 
+            gap-8 py-3 px-5 rounded-xl bg-blue-400 text-white ">
             <!-- <button onclick="changeHandler(this)" change>kjbj
             </button> -->
+
             <!-- <button onclick="printCoordinates(0,0)" change>kjbj
             </button> -->
             <button onclick="shapeHandler(`pen`)"><i class="fa-solid fa-pen"></i></button>
             <button><i class="fa-solid fa-eraser"></i></button>
-            <button><i class="fa-solid fa-shapes"></i></button>
-            <button onclick="shapeHandler(`hand`)"><i class="fa-solid fa-pen-ruler"></i></button>
+            <!-- <button onclick="shapeHandler(`circle`)"><i class="fa-solid fa-shapes"></i></button> -->
+
+            <button onclick="shapesAndLineHandler(`shapes`)" class="relative">
+                <i class="relative z-10 fa-solid fa-shapes"></i>
+                <div class="absolute -top-[200%] -left-2/3 bg-blue-400 
+                slideUp flex-col gap-4 p-3 rounded-xl" data-shapes>
+                    <!-- <div class="absolute top-[175%] left-1/2 -translate-x-1/2 
+                    hidden flex-col bg-blue-400 gap-4 p-3 rounded-xl" data-shapes> -->
+                    <i onclick="shapeHandler(`pen`)" class="fa-solid fa-lines-leaning"></i>
+                    <i onclick="shapeHandler(`pen`)" class="fa-regular fa-circle"></i>
+                    <i onclick="shapeHandler(`pen`)" class="fa-solid fa-circle"></i>
+                    <i onclick="shapeHandler(`pen`)" class="fa-regular fa-square"></i>
+                    <i onclick="shapeHandler(`pen`)" class="fa-solid fa-square"></i>
+                </div>
+            </button>
+
+            <button onclick="shapeHandler(`hand`)"><i class="fa-solid fa-hand"></i></button>
+            <button onclick="shapesAndLineHandler(`lineWidth`)" class="relative">
+                <i class="fa-solid fa-pen-ruler"></i>
+                <div class="absolute top-[100%] -left-[350%] bg-blue-400 gap-4 p-3 rounded-xl slideUp" data-lineWidth>
+                    <input type="range" name="slider" id="slider" min="1" max="10" step="1" data-lineWidthSlider>
+                </div>
+            </button>
             <button><i class="fa-solid fa-paint-roller"></i></button>
             <button><i class="fa-solid fa-notes-medical"></i></button>
         </aside>
 
         <!-- <canvas onclick="changeHandler(this)" class="relative bg-gray-400 w-full h-full scale-100"> -->
-        <canvas class="relative bg-gray-400 w-full h-full">
+        <!-- <canvas class="relative bg-gray-400 min-w-[100vw] h-[calc(100vh-51px)]"> -->
+        <canvas class="relative top-0 bg-gray-400 w-full h-[100%]">
+            <!-- <canvas class="example  bg-gray-400 w-[500%] h-[calc(500%-54px)]"> -->
         </canvas>
+
+        <footer class="fixed w-full z-10 bottom-0 px-4 py-2 bg-blue-400 flex justify-between">
+            <div class="flex justify-start">
+                <button onclick="undoHandler()"
+                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold">undo</button>
+                <button class="px-4 py-1 border-2 rounded-full text-white font-semibold">redo</button>
+            </div>
+            <div class="flex justify-end">
+                <button class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold">Prev</button>
+                <button class="px-4 py-1 border-2 rounded-full text-white font-semibold">Next</button>
+            </div>
+        </footer>
     </div>
 
     <script src="script.js"></script>
