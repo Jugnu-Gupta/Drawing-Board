@@ -3,6 +3,10 @@ const lineWidthSlider = document.querySelector('[data-lineWidthSlider]');
 const forcanvas = document.querySelector("[for-canvas]");
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
+context.imageSmoothingEnabled = true;
+context.imageSmoothingQuality = 'high';
+context.lineCap = 'round';
+context.lineJoin = 'round';
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -40,17 +44,17 @@ function shapesAndLineHandler(name) {
     }
 }
 
-function handleSlider(event) {
-    lineWidthSlider.value = lineWidth;
+function slideHandler(event) {
+    event.stopPropagation();
+    lineWidth = lineWidthSlider.value;
     // lengthDisplay.textContent = passwordLength;
 
     // slider background color.
     const min = lineWidthSlider.min;
     const max = inputSlider.max;
-    // lineWidthSlider.style.backgroundSize = ( (passwordLength - min )* 100 / ( max - min) ) + "% 100%";  // not working.
-    lineWidthSlider.style.background = `linear-gradient(to right, #0E61DE 0%, #0E61DE ${(passwordLength - min) / (max - min) * 100}%, #261263 ${(passwordLength - min) / (max - min) * 100}%, #261263 100%)`
-
-    // console.log(lineWidthSlider.style.backgroundSize);
+    lineWidthSlider.style.background = `linear-gradient(to right, #0E61DE 0%, #0E61DE 
+        ${(passwordLength - min) / (max - min) * 100}%, #261263 
+        ${(passwordLength - min) / (max - min) * 100}%, #261263 100%)`
 }
 
 function printCoordinates(x, y) {
@@ -58,9 +62,11 @@ function printCoordinates(x, y) {
     document.querySelector("[change]").innerHTML = `${x}x${y}`;
 }
 
-function shapeHandler(_shape) {
+function shapeHandler(_shape, event) {
     shape = _shape;
-    // console.log(shape);
+
+    console.log(shape);
+    event.stopPropagation();
 }
 
 // Function to start drawing
@@ -79,18 +85,29 @@ function startDrawing(event) {
     [startX, startY] = adjustCoordinates(event.clientX, event.clientY);
 }
 
-function drawLine(prevX, prevY, curX, curY) {
+function drawLine(startX, startY, endX, endY, lineWidth, strokeStyle = 'black') {
     context.beginPath();
-    context.strokeStyle = 'black';
+    console.log(context);
+    context.strokeStyle = strokeStyle;
     context.lineWidth = lineWidth;
-    context.moveTo(prevX, prevY);
-    context.lineTo(curX, curY);
+    context.moveTo(startX, startY);
+    context.lineTo(endX, endY);
     context.stroke();
 }
 
-function drawCircle(startX, startY, radius) {
+function drawRectangle(startX, startY, width, height, lineWidth, strokeStyle = 'black', fillStyle = 'white') {
     context.beginPath();
-    context.strokeStyle = 'black';
+    context.strokeStyle = strokeStyle;
+    context.fillStyle = fillStyle;
+    context.lineWidth = lineWidth;
+    context.rect(startX, startY, width, height);
+    context.stroke();
+}
+
+function drawCircle(startX, startY, radius, strokeStyle = 'black', fillStyle = 'white') {
+    context.beginPath();
+    context.strokeStyle = strokeStyle;
+    context.fillStyle = fillStyle;
     context.lineWidth = lineWidth;
     context.arc(startX, startY, radius, 0, 2 * Math.PI);
     context.stroke();
@@ -119,6 +136,7 @@ function draw(event) {
                 shape: {
                     name: "pen",
                     startX: prevX, startY: prevY, endX: curX, endY: curY,
+                    strokeStyle: 'black', lineWidth: lineWidth,
                 }
             }
             );
@@ -133,17 +151,36 @@ function draw(event) {
 
             // console.log("circle");
 
-            // undoHandler();
             repaintHandler(1, 1);
-
             drawCircle(prevX, prevY, r);
 
             // store.
             currDrawing = [{
                 shape: {
                     name: "circle",
-                    startX: prevX,
-                    startY: prevY, radius: r,
+                    startX: prevX, startY: prevY, radius: r,
+                    strokeStyle: 'black', lineWidth: lineWidth,
+
+                }
+            }];
+        }
+        if (shape == "rectangle") {
+            const [prevX, prevY] = [startX, startY];
+            const w = abs(curX - prevX);
+            const h = abs(curY - prevY);
+
+            // console.log("circle");
+
+            // undoHandler();
+            repaintHandler(1, 1);
+
+            drawRectangle(prevX, prevY, w, h);
+
+            // store.
+            currDrawing = [{
+                shape: {
+                    name: "rectangle",
+                    startX: prevX, startY: prevY, width: w, height: h,
                 }
             }];
         }
@@ -161,7 +198,8 @@ function draw(event) {
         // printCoordinates(0, 0);
 
         // bug: code working properly when undefined function is called. 
-        // xyz();
+        xyz();
+
         // Update the last position.
         startX = curX;
         startY = curY;

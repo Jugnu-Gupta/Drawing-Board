@@ -65,29 +65,30 @@
 
             <!-- <button onclick="printCoordinates(0,0)" change>kjbj
             </button> -->
-            <button onclick="shapeHandler(`pen`)"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="shapeHandler(`pen`, event)"><i class="fa-solid fa-pen"></i></button>
             <button><i class="fa-solid fa-eraser"></i></button>
             <!-- <button onclick="shapeHandler(`circle`)"><i class="fa-solid fa-shapes"></i></button> -->
 
             <button onclick="shapesAndLineHandler(`shapes`)" class="relative">
                 <i class="relative z-10 fa-solid fa-shapes"></i>
                 <div class="absolute -top-[200%] -left-2/3 bg-blue-400 
-                slideUp flex-col gap-4 p-3 rounded-xl" data-shapes>
+                slideUp flex-col rounded-xl" data-shapes>
                     <!-- <div class="absolute top-[175%] left-1/2 -translate-x-1/2 
                     hidden flex-col bg-blue-400 gap-4 p-3 rounded-xl" data-shapes> -->
-                    <i onclick="shapeHandler(`pen`)" class="fa-solid fa-lines-leaning"></i>
-                    <i onclick="shapeHandler(`pen`)" class="fa-regular fa-circle"></i>
-                    <i onclick="shapeHandler(`pen`)" class="fa-solid fa-circle"></i>
-                    <i onclick="shapeHandler(`pen`)" class="fa-regular fa-square"></i>
-                    <i onclick="shapeHandler(`pen`)" class="fa-solid fa-square"></i>
+                    <i onclick="shapeHandler(`pen`,event)" class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
+                    <i onclick="shapeHandler(`pen`,event)" class="fa-regular fa-circle p-2 px-1"></i>
+                    <i onclick="shapeHandler(`pen`,event)" class="fa-solid fa-circle p-2 px-1"></i>
+                    <i onclick="shapeHandler(`pen`,event)" class="fa-regular fa-square p-2 px-3"></i>
+                    <i onclick="shapeHandler(`pen`,event)" class="fa-solid fa-square p-2 px-3 pb-3"></i>
                 </div>
             </button>
 
-            <button onclick="shapeHandler(`hand`)"><i class="fa-solid fa-hand"></i></button>
+            <button onclick="shapeHandler(`hand`,event)"><i class="fa-solid fa-hand"></i></button>
             <button onclick="shapesAndLineHandler(`lineWidth`)" class="relative">
                 <i class="fa-solid fa-pen-ruler"></i>
-                <div class="absolute top-[100%] -left-[350%] bg-blue-400 gap-4 p-3 rounded-xl slideUp" data-lineWidth>
-                    <input type="range" name="slider" id="slider" min="1" max="10" step="1" data-lineWidthSlider>
+                <div class="absolute top-[50%] -left-[350%] bg-blue-400 rounded-xl slideUp px-3" data-lineWidth>
+                    <input onclick="slideHandler(event)" type="range" name="slider" id="slider" min="1" max="10"
+                        step="1" class="py-3" data-lineWidthSlider>
                 </div>
             </button>
             <button><i class="fa-solid fa-paint-roller"></i></button>
