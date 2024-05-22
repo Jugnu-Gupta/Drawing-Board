@@ -7,21 +7,7 @@
     <link rel="stylesheet" href="main.css">
     <title>Document</title>
     <style>
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .example::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .example {
-            -ms-overflow-style: none;
-            /* IE and Edge */
-            scrollbar-width: none;
-            /* Firefox */
-        }
-
         .slideDown {
-            /* display: flex; */
             animation: downMovement 200ms ease-in-out forwards;
         }
 
@@ -37,7 +23,6 @@
         }
 
         .slideUp {
-            /* display: hidden; */
             animation: upMovement 200ms ease-in-out forwards;
         }
 
@@ -59,53 +44,110 @@
     <div class="h-[100vh] w-full bg-red-100">
 
         <aside class="fixed z-10 top-4 left-1/2 -translate-x-1/2 flex justify-center 
-            gap-8 py-3 px-5 rounded-xl bg-blue-400 text-white ">
-            <!-- <button onclick="changeHandler(this)" change>kjbj
-            </button> -->
+            gap-8 py-2 px-4 rounded-xl bg-blue-400 text-white ">
 
             <!-- <button onclick="printCoordinates(0,0)" change>kjbj
             </button> -->
-            <button onclick="shapeHandler(`pen`, event)"><i class="fa-solid fa-pen"></i></button>
-            <button><i class="fa-solid fa-eraser"></i></button>
-            <!-- <button onclick="shapeHandler(`circle`)"><i class="fa-solid fa-shapes"></i></button> -->
 
-            <button onclick="shapesAndLineHandler(`shapes`)" class="relative">
+            <!-- pen -->
+            <button onclick="shapeHandler(`pen`, event)" class="bg-gray-400 rounded-full px-2 py-1" data-pen>
+                <i class="fa-solid fa-pen"></i>
+            </button>
+
+
+            <!-- Eraser -->
+            <button onclick="shapeHandler(`eraser`, event)" class="rounded-full px-2 py-1" data-eraser>
+                <i class="fa-solid fa-eraser"></i>
+            </button>
+
+
+            <!-- multiple shapes -->
+            <button onclick="selectOptionHandler(`multipleShapes`)" class="relative rounded-full px-2 py-1"
+                data-multipleShapes>
                 <i class="relative z-10 fa-solid fa-shapes"></i>
-                <div class="absolute -top-[200%] -left-2/3 bg-blue-400 
-                slideUp flex-col rounded-xl" data-shapes>
-                    <!-- <div class="absolute top-[175%] left-1/2 -translate-x-1/2 
-                    hidden flex-col bg-blue-400 gap-4 p-3 rounded-xl" data-shapes> -->
-                    <i onclick="shapeHandler(`pen`,event)" class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
-                    <i onclick="shapeHandler(`pen`,event)" class="fa-regular fa-circle p-2 px-1"></i>
-                    <i onclick="shapeHandler(`pen`,event)" class="fa-solid fa-circle p-2 px-1"></i>
-                    <i onclick="shapeHandler(`pen`,event)" class="fa-regular fa-square p-2 px-3"></i>
-                    <i onclick="shapeHandler(`pen`,event)" class="fa-solid fa-square p-2 px-3 pb-3"></i>
+                <div class="absolute -top-[150%] -left-2/3 bg-blue-400 
+                slideUp flex flex-col rounded-xl" data-ListOfShapes>
+
+                    <i onclick="shapeHandler(`straightLine`,event)" class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
+                    <i onclick="shapeHandler(`circle`,event)" class="fa-regular fa-circle p-2 px-1"></i>
+                    <i onclick="shapeHandler(`solidCircle`,event)" class="fa-solid fa-circle p-2 px-1"></i>
+                    <i onclick="shapeHandler(`rectangle`,event)" class="fa-regular fa-square p-2 px-3"></i>
+                    <i onclick="shapeHandler(`solidRectangle`,event)" class="fa-solid fa-square p-2 px-3 pb-3"></i>
                 </div>
             </button>
 
-            <button onclick="shapeHandler(`hand`,event)"><i class="fa-solid fa-hand"></i></button>
-            <button onclick="shapesAndLineHandler(`lineWidth`)" class="relative">
-                <i class="fa-solid fa-pen-ruler"></i>
-                <div class="absolute top-[50%] -left-[350%] bg-blue-400 rounded-xl slideUp px-3" data-lineWidth>
-                    <input onclick="slideHandler(event)" type="range" name="slider" id="slider" min="1" max="10"
-                        step="1" class="py-3" data-lineWidthSlider>
+
+            <!-- Zoom -->
+            <button onclick="selectOptionHandler(`zoom`)" class="relative rounded-full px-2 py-1" data-zoom>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <div class="absolute top-0 -left-2/3 bg-blue-400 
+                slideUp flex flex-col rounded-xl" data-zoomInOut>
+
+                    <i onclick="shapeHandler(`zoomIn`,event)"
+                        class="fa-solid fa-magnifying-glass-plus p-2 px-3 pt-3"></i>
+                    <i onclick="shapeHandler(`zoomOut`,event)" class="fa-solid fa-magnifying-glass-minus p-2 px-1"></i>
                 </div>
             </button>
-            <button><i class="fa-solid fa-paint-roller"></i></button>
-            <button><i class="fa-solid fa-notes-medical"></i></button>
+
+
+            <!-- hand -->
+            <button onclick="shapeHandler(`hand`,event)" class="rounded-full px-2 py-1" data-hand>
+                <i class="fa-solid fa-hand"></i>
+            </button>
+
+
+            <!-- pen-width -->
+            <button onclick="selectOptionHandler(`lineWidth`)" class="relative rounded-full px-2 py-1" data-strokeWidth>
+                <i class="fa-solid fa-pen-ruler"></i>
+                <div class="absolute top-[50%] -left-[350%] bg-blue-400 rounded-xl slideUp px-3 w-32" data-lineWidth>
+                    <input onchange="slideHandler(event)" type="range" name="slider" min="1" max="10" step="1" value="2"
+                        class="py-3 w-full" data-lineWidthSlider>
+                </div>
+            </button>
+
+
+            <!-- color picker -->
+            <button onclick="selectOptionHandler(`colorPicker`)" class="relative rounded-full px-2 py-1"
+                data-colorPickerConatiner>
+                <i class="fa-solid fa-palette"></i>
+                <div onclick="colorPickerHandler(event)"
+                    class="absolute -top-[25%] -left-[200%] bg-blue-400 rounded-xl slideUp flex flex-col px-3"
+                    data-colorPicker>
+
+                    <div class="flex justify-between items-center gap-2 py-2">
+                        <label for="strokeColor" class="text-sm"><i class="fa-solid fa-paintbrush"></i></label>
+                        <div class="rounded-full overflow-hidden w-8 h-8 relative border-4">
+                            <input onchange="colorPickerHandler(event)" type="color" name="strokeColor" id="strokeColor"
+                                value="#000000" class="h-10 w-10 absolute -top-[25%] -left-[25%] cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center gap-2 pb-2">
+                        <label for="backgroundColor" class="text-sm">
+                            <i class="fa-solid fa-paint-roller"></i>
+                        </label>
+                        <div class="rounded-full overflow-hidden w-8 h-8 relative border-4">
+                            <input onchange="colorPickerHandler(event)" type="color" name="backgroundColor"
+                                id="backgroundColor" value="#9ca3af"
+                                class="h-10 w-10 absolute -top-[25%] -left-[25%] cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+            </button>
+
+
+            <!-- <button><i class="fa-solid fa-notes-medical"></i></button> -->
         </aside>
 
-        <!-- <canvas onclick="changeHandler(this)" class="relative bg-gray-400 w-full h-full scale-100"> -->
-        <!-- <canvas class="relative bg-gray-400 min-w-[100vw] h-[calc(100vh-51px)]"> -->
-        <canvas class="relative top-0 bg-gray-400 w-full h-[100%]">
-            <!-- <canvas class="example  bg-gray-400 w-[500%] h-[calc(500%-54px)]"> -->
+        <canvas class="canvas relative top-0 bg-gray-400 w-full h-[100%]">
         </canvas>
 
         <footer class="fixed w-full z-10 bottom-0 px-4 py-2 bg-blue-400 flex justify-between">
             <div class="flex justify-start">
                 <button onclick="undoHandler()"
                     class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold">undo</button>
-                <button class="px-4 py-1 border-2 rounded-full text-white font-semibold">redo</button>
+                <button onclick="redoHandler()"
+                    class="px-4 py-1 border-2 rounded-full text-white font-semibold">redo</button>
             </div>
             <div class="flex justify-end">
                 <button class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold">Prev</button>
