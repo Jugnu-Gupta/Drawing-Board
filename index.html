@@ -112,7 +112,7 @@
                 data-strokeWidth>
                 <i class="fa-solid fa-pen-ruler"></i>
                 <div class="absolute top-[50%] -left-[350%] bg-blue-400 rounded-xl slideUp px-3 w-32" data-lineWidth>
-                    <input onchange="lineWidthAdjustmentHandler(event)" type="range" name="slider" min="1" max="10"
+                    <input onclick="lineWidthAdjustmentHandler(event)" type="range" name="slider" min="1" max="10"
                         step="1" value="2" class="py-3 w-full" data-lineWidthSlider>
                 </div>
             </button>
@@ -162,8 +162,18 @@
                     class="px-4 py-1 border-2 rounded-full text-white font-semibold">redo</button>
             </div>
             <div class="flex justify-end">
-                <button class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold">Prev</button>
-                <button class="px-4 py-1 border-2 rounded-full text-white font-semibold">Next</button>
+                <button onclick="deletePageHandler()"
+                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold"
+                    data-deletePageButton>Delete</button>
+                <button onclick="clearPageHandler()"
+                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold"
+                    data-clearPageButton>Clear</button>
+                <button onclick="prevPageHandler()"
+                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold hidden"
+                    data-prevPageButton>Prev</button>
+                <button onclick="nextAndAddPageHandler()"
+                    class="px-4 py-1 border-2 rounded-full text-white font-semibold"
+                    data-nextAndAddPageButton>Add</button>
             </div>
         </footer>
     </div>

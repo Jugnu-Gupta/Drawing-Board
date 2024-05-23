@@ -16,7 +16,7 @@ const dataListOfShapes = document.querySelector('[data-ListOfShapes]');
 const dataColorPicker = document.querySelector('[data-colorPicker]');
 const dataZoomInOut = document.querySelector('[data-zoomInOut]');
 
-const toolbarOptions = {
+const toolbarOptionsObject = {
     pen: { name: dataPen },
     eraser: { name: dataEraserContainer, child: dataEraser },
     hand: { name: dataHand },
@@ -27,67 +27,84 @@ const toolbarOptions = {
 };
 
 // Get the canvas element
-const forcanvas = document.querySelector("[for-canvas]");
 const canvas = document.querySelector(".canvas");
 const context = canvas.getContext("2d");
 context.imageSmoothingEnabled = true;
 context.imageSmoothingQuality = 'high';
+
+// footer
+// const clearPageButton = document.querySelector("[data-clearPageButton]");
+const deletePageButton = document.querySelector("[data-deletePageButton]");
+const prevPageButton = document.querySelector("[data-prevPageButton]");
+const nextAndAddPageButton = document.querySelector("[data-nextAndAddPageButton]");
 
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // Variables to track the drawing state
+let pages = [{
+    backgroundColor: '#9ca3af',
+    drawnArray: [],
+    redoArray: [],
+    scaleFactor: 1.0,
+}];
+let curPageNo = 0;
+
+// Variables to keep track of the current page.
 let isDrawing = false;
+let isDragging = false;
+let lineWidth = 2;
 let startX = 0;
 let startY = 0;
-let lineWidth = 2;
 let strokeColor = '#000000';
-let backgroundColor = '#9ca3af';
-let drawnArray = [];
-let redoArray = [];
-let curDrawing = [];
-let isDragging = false;
 let shape = "pen";
-let toggleList = null;
+let curDrawing = [];
 let toolbarOption = "pen";
+let toggleList = null;
 
-// Zooming
-let scaleFactor = 1.0;
+let backgroundColor = pages[curPageNo].backgroundColor;
+let drawnArray = pages[curPageNo].drawnArray;
+let redoArray = pages[curPageNo].redoArray;
+
+// zoom
 const zoomSpeed = 0.1;
+let scaleFactor = pages[curPageNo].scaleFactor;
+
 
 function toolbarOptionHandler(option) {
-    console.log(toolbarOptions[option]);
+    const curPage = pages[curPageNo];
+    console.log(toolbarOptionsObject[option]);
     if (option === "multipleShapes" || option === "zoom" || option === "lineWidth" || option === "colorPicker" || option === "eraser") {
-        console.log("hello", option);
+        // console.log("hello", option);
         toggleListHandler(option);
     }
     else {
-        toolbarOptions[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptions[option].name.classList.add('bg-gray-400');
+        toolbarOptionsObject[curPage.toolbarOption].name.classList.remove('bg-gray-400');
+        toolbarOptionsObject[option].name.classList.add('bg-gray-400');
         toolbarOption = option;
     }
 }
 
 
 function toggleListHandler(name) {
-    toolbarOptions[toggleList]?.child?.classList?.add("slideUp");
-    toolbarOptions[toggleList]?.child?.classList?.remove("slideDown");
+    toolbarOptionsObject[toggleList]?.child?.classList?.add("slideUp");
+    toolbarOptionsObject[toggleList]?.child?.classList?.remove("slideDown");
 
-    // console.log("list", list);
+    // console.log("list", toggleList);
 
     // console.log("name", name);
     if (name === toggleList) {
         toggleList = null; return;
     }
     toggleList = name;
-    if (toolbarOptions[toggleList].child.classList.contains("slideUp")) {
-        toolbarOptions[toggleList].child.classList.remove("slideUp");
-        toolbarOptions[toggleList].child.classList.add("slideDown");
+    if (toolbarOptionsObject[toggleList].child.classList.contains("slideUp")) {
+        toolbarOptionsObject[toggleList].child.classList.remove("slideUp");
+        toolbarOptionsObject[toggleList].child.classList.add("slideDown");
     }
     else {
-        toolbarOptions[toggleList].child.classList.add("slideUp");
-        toolbarOptions[toggleList].child.classList.remove("slideDown");
+        toolbarOptionsObject[toggleList].child.classList.add("slideUp");
+        toolbarOptionsObject[toggleList].child.classList.remove("slideDown");
     }
 }
 
@@ -96,18 +113,19 @@ function shapeAndToolHandler(shapeName, event) {
     shape = shapeName;
     if (shape === "straightLine" || shape === "circle" || shape === "rectangle" ||
         shape === "solidCircle" || shape === "solidRectangle") {
-        toolbarOptions[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptions.multipleShapes.name.classList.add('bg-gray-400');
+        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
+        toolbarOptionsObject.multipleShapes.name.classList.add('bg-gray-400');
         toolbarOption = "multipleShapes";
     }
     else if (shape === "basicEraser" || shape === "objectEraser") {
-        toolbarOptions[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptions.eraser.name.classList.add('bg-gray-400');
+        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
+        toolbarOptionsObject.eraser.name.classList.add('bg-gray-400');
         toolbarOption = "eraser";
     }
     else if (shape === "zoomIn" || shape === "zoomOut") {
-        toolbarOptions[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptions.zoom.name.classList.add('bg-gray-400');
+        context.log("zoomIn");
+        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
+        toolbarOptionsObject.zoom.name.classList.add('bg-gray-400');
         toolbarOption = "zoom";
     }
     else if (shape !== "pen" && shape !== "hand") {
@@ -119,7 +137,6 @@ function shapeAndToolHandler(shapeName, event) {
 
 // function to adjust the line/pen width.
 function lineWidthAdjustmentHandler(event) {
-    event.stopPropagation();
     lineWidth = lineWidthSlider.value;
 
     // slider background color.
@@ -127,7 +144,9 @@ function lineWidthAdjustmentHandler(event) {
     const max = event.target.max;
     lineWidthSlider.style.background = `linear-gradient(to right, #0E61DE 0%, #0E61DE 
         ${(lineWidth - min) / (max - min) * 100}%, #261263 
-        ${(lineWidth - min) / (max - min) * 100}%, #261263 100%)`
+        ${(lineWidth - min) / (max - min) * 100}%, #261263 100%)`;
+
+    event.stopPropagation();
 }
 
 
@@ -541,6 +560,131 @@ function redoHandler() {
     repaintHandler(1, 1);
 }
 
+function deletePageHandler() {
+    if (curPageNo === pages.length - 2) {
+        nextAndAddPageButton.innerHTML = "Add";
+    }
+    if (curPageNo === 1 && pages.length === 2) {
+        prevPageButton.classList.add("hidden");
+    }
+    console.log(curPageNo, pages.length);
+
+    // last page cannot be deleted.
+    if (pages.length === 1) return;
+
+    // delete the current page and update the page no.
+    pages.splice(curPageNo, 1);
+    if (curPageNo === pages.length) curPageNo--;
+
+    // update the global variables.
+    drawnArray = pages[curPageNo].drawnArray;
+    redoArray = pages[curPageNo].redoArray;
+    backgroundColor = pages[curPageNo].backgroundColor;
+    scaleFactor = pages[curPageNo].scaleFactor;
+
+    // update the canvas.
+    canvas.style.backgroundColor = backgroundColor;
+    scaleCanvas(scaleFactor);
+    repaintHandler(1, 1);
+}
+
+// function to update the current page.
+function updateCurrentPageHandler() {
+    pages[curPageNo].drawnArray = drawnArray;
+    pages[curPageNo].redoArray = redoArray;
+    pages[curPageNo].backgroundColor = backgroundColor;
+    pages[curPageNo].scaleFactor = scaleFactor;
+}
+
+// function updateVariablesOnPageChangeHandler() {
+//     drawnArray = pages[curPageNo].drawnArray;
+//     redoArray = pages[curPageNo].redoArray;
+//     backgroundColor = pages[curPageNo].backgroundColor;
+//     scaleFactor = pages[curPageNo].scaleFactor;
+// }
+
+function clearPageHandler() {
+    pages[curPageNo].drawnArray = [];
+    pages[curPageNo].redoArray = [];
+    drawnArray = [];
+    redoArray = [];
+    repaintHandler(1, 1);
+}
+
+// function to move to the next page and add new page.
+function nextAndAddPageHandler() {
+    if (curPageNo === pages.length - 2) {
+        nextAndAddPageButton.innerHTML = "Add";
+    }
+    if (curPageNo === 0) {
+        prevPageButton.classList.remove("hidden");
+    }
+    // console.log("next", curPageNo, pages.length);
+
+    // update the current page.
+    updateCurrentPageHandler();
+
+    // add new page.
+    if (curPageNo === pages.length - 1) {
+        pages.push({
+            drawnArray: [],
+            redoArray: [],
+            backgroundColor: backgroundColor,
+            scaleFactor: 1,
+        });
+        curPageNo++;
+
+        // update the global variables.
+        drawnArray = [];
+        redoArray = [];
+        scaleFactor = 1;
+    }
+    // move to the next page.
+    else {
+        // update the global variables.
+        curPageNo++;
+        drawnArray = pages[curPageNo].drawnArray;
+        redoArray = pages[curPageNo].redoArray;
+        backgroundColor = pages[curPageNo].backgroundColor;
+        scaleFactor = pages[curPageNo].scaleFactor;
+
+        // update the canvas.
+        canvas.style.backgroundColor = backgroundColor;
+    }
+
+    // reset the canvas.
+    scaleCanvas(scaleFactor);
+    repaintHandler(1, 1);
+}
+
+// function to move to the previous page.
+function prevPageHandler() {
+    if (curPageNo === 0) return;
+    else if (curPageNo === 1) {
+        prevPageButton.classList.add("hidden");
+    }
+    if (curPageNo === pages.length - 1) {
+        nextAndAddPageButton.innerHTML = "Next";
+    }
+
+    console.log("prev", curPageNo, pages.length);
+
+    // update the current page.
+    updateCurrentPageHandler();
+
+    // update the global variables.
+    curPageNo--;
+    drawnArray = pages[curPageNo].drawnArray;
+    redoArray = pages[curPageNo].redoArray;
+    backgroundColor = pages[curPageNo].backgroundColor;
+    scaleFactor = pages[curPageNo].scaleFactor;
+
+    // update the canvas.
+    canvas.style.backgroundColor = backgroundColor;
+    scaleCanvas(scaleFactor);
+    repaintHandler(1, 1);
+}
+
 // Function to resize the canvas.
 function resizeHandler() {
     const ratioWidth = window.innerWidth / canvas.width;
@@ -553,34 +697,42 @@ function resizeHandler() {
     repaintHandler(ratioWidth, ratioHeight);
 }
 
-// Function to zoom in or zoom out the canvas.
-function zoomHandler(event) {
-    if (event.ctrlKey === true || shape === "zoomIn" || shape === "zoomOut") {
-        event.preventDefault();
+// Function to calculate the zoom factor.
+function calculateZoom(event) {
+    event.preventDefault();
 
-        const zoomOut = (event.deltaY < 0) || (shape === "zoomOut");
-        console.log(zoomOut);
+    const zoomOut = (event.deltaY < 0) || (shape === "zoomOut");
+    console.log(zoomOut);
 
-        if (zoomOut) {
-            scaleFactor = Math.max(scaleFactor - zoomSpeed, 1);
-        } else {
-            scaleFactor = Math.min(scaleFactor + zoomSpeed, 10);
-        }
-
-        if (scaleFactor > 1) {
-            canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * .5 - 4 * scaleFactor}px`;
-            canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * .5 - 7 * scaleFactor}px`;
-        }
-        else if (scaleFactor <= 1) {
-            canvas.style.marginTop = `${0}px`;
-            canvas.style.marginLeft = `${0}px`;
-        }
-        canvas.style.transform = `scale(${scaleFactor})`;
-        // printCoordinates(scaleFactor, scaleFactor);
+    if (zoomOut) {
+        scaleFactor = Math.max(scaleFactor - zoomSpeed, 1);
+    } else {
+        scaleFactor = Math.min(scaleFactor + zoomSpeed, 10);
     }
+
+    return scaleFactor;
 }
 
-// console.log("ratio " + devicePixelRatio);
+// function to scale the canvas.
+function scaleCanvas(scaleFactor) {
+    if (scaleFactor > 1) {
+        canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * 0.5 - 4 * scaleFactor}px`;
+        canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * 0.5 - 7 * scaleFactor}px`;
+    } else if (scaleFactor <= 1) {
+        canvas.style.marginTop = `${0}px`;
+        canvas.style.marginLeft = `${0}px`;
+    }
+    canvas.style.transform = `scale(${scaleFactor})`;
+    // printCoordinates(scaleFactor, scaleFactor);
+}
+
+// function to handle the zoom in and zoom out.
+function zoomHandler(event) {
+    if (event.ctrlKey === true || shape === "zoomIn" || shape === "zoomOut") {
+        const scale = calculateZoom(event);
+        scaleCanvas(scale);
+    }
+}
 
 
 // Function to adjust the coordinates based on the canvas position and zoom factor.
