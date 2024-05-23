@@ -66,6 +66,8 @@ let toggleList = null;
 let backgroundColor = pages[curPageNo].backgroundColor;
 let drawnArray = pages[curPageNo].drawnArray;
 let redoArray = pages[curPageNo].redoArray;
+let offsetX = 0;
+let offsetY = 0;
 
 // zoom
 const zoomSpeed = 0.1;
@@ -73,15 +75,11 @@ let scaleFactor = pages[curPageNo].scaleFactor;
 
 
 function toolbarOptionHandler(option) {
-    const curPage = pages[curPageNo];
-    // console.log(toolbarOptionsObject[option]);
-
     if (option === "multipleShapes" || option === "zoom" || option === "lineWidth" || option === "colorPicker" || option === "eraser") {
-        // console.log("hello", option);
         toggleListHandler(option);
     }
     else {
-        toolbarOptionsObject[curPage.toolbarOption].name.classList.remove('bg-gray-400');
+        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
         toolbarOptionsObject[option].name.classList.add('bg-gray-400');
         toolbarOption = option;
     }
@@ -124,14 +122,19 @@ function shapeAndToolHandler(shapeName, event) {
         toolbarOption = "eraser";
     }
     else if (shape === "zoomIn" || shape === "zoomOut") {
-        context.log("zoomIn");
         toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
         toolbarOptionsObject.zoom.name.classList.add('bg-gray-400');
         toolbarOption = "zoom";
     }
-    else if (shape !== "pen" && shape !== "hand") {
+    else if (shape === "pen" || shape === "hand") {
+        toolbarOptionHandler(shape);
+    }
+    else {
         toggleListHandler(shape);
     }
+    // else if (shape !== "pen" && shape !== "hand") {
+    //     toggleListHandler(shape);
+    // }
     console.log(shape);
     event.stopPropagation();
 }
@@ -158,7 +161,6 @@ function colorPickerHandler(event) {
         strokeColor = event.target.value;
     }
     else if (event.target.name === 'backgroundColor') {
-        console.log(event.target.value);
         backgroundColor = event.target.value;
         canvas.style.backgroundColor = backgroundColor;
         repaintHandler(1, 1);
@@ -191,15 +193,13 @@ function startDrawing(event) {
 
 // function to check if the point is below the line.
 function isPointBelowTheline(line, point) {
-    //     // Eq of line: y-y1 = ((y2-y1)/(x2-x1))*(x-x1);
+    // Eq of line: y-y1 = ((y2-y1)/(x2-x1))*(x-x1);
     return (line.Y2 - line.Y1) * (point.X - line.X2) -
         (line.X2 - line.X1) * (point.Y - line.Y2) >= 0;
 }
 
 // function to check if the point is inside the rectangle.
 function isPointInsideTheRectangle(rectangle, point) {
-    console.log(rectangle, point);
-
     return rectangle.X1 <= point.X && point.X <= rectangle.X2 &&
         rectangle.Y1 <= point.Y && point.Y <= rectangle.Y2;
 }
@@ -208,7 +208,6 @@ function isPointInsideTheRectangle(rectangle, point) {
 function isPointInsideTheCircle(circle, point) {
     const dist = Math.sqrt(Math.pow((circle.X - point.X), 2) + Math.pow((circle.Y - point.Y), 2));
 
-    // console.log(dist, circle.radius, dist <= circle.radius);
     return dist <= circle.radius;
 }
 
@@ -239,7 +238,6 @@ function eraseObject(startX, startY, endX, endY) {
                 if (isPointBelowTheline(line1, point1) !== isPointBelowTheline(line1, point2) &&
                     isPointBelowTheline(line2, point3) !== isPointBelowTheline(line2, point4)) {
                     curDrawing.push(i);
-                    console.log("line", i);
                     break;
                 }
             }
@@ -252,7 +250,6 @@ function eraseObject(startX, startY, endX, endY) {
                 if ((isPointInsideTheCircle(circle, point1) !== isPointInsideTheCircle(circle, point2)) ||
                     ((isPointInsideTheCircle(circle, point1) || isPointInsideTheCircle(circle, point2)) && shapeInfo?.solid)) {
                     curDrawing.push(i);
-                    console.log("circle", i);
                     break;
                 }
             }
@@ -261,12 +258,10 @@ function eraseObject(startX, startY, endX, endY) {
                     X1: shapeInfo.startX, Y1: shapeInfo.startY,
                     X2: shapeInfo.startX + shapeInfo.width, Y2: shapeInfo.startY + shapeInfo.height,
                 };
-                console.log(rectangle);
 
                 if ((isPointInsideTheRectangle(rectangle, point1) !== isPointInsideTheRectangle(rectangle, point2)) ||
                     ((isPointInsideTheRectangle(rectangle, point1) || isPointInsideTheRectangle(rectangle, point2)) && shapeInfo?.solid)) {
                     curDrawing.push(i);
-                    console.log("rectangle", i);
                     break;
                 }
             }
@@ -415,7 +410,8 @@ function draw(event) {
                         lineWidth: lineWidth,
                     }
                 });
-            } else {// eraser: objectEraser.
+            }
+            else {// eraser: objectEraser.
                 repaintHandler(1, 1);
                 eraseObject(prevX, prevY, curX, curY);
             }
@@ -445,6 +441,19 @@ function draw(event) {
     // console.log(curDrawing);
 }
 
+// function to modify the current drawing array for objectEraser.
+function modifyCurrentDrawingArray() {
+    for (let i = curDrawing.length - 1; i >= 0; i--) {
+        const idx = curDrawing[i];
+        curDrawing[i] = {
+            shape: "objectEraser",
+            index: idx,
+            content: drawnArray[idx],
+        };
+        drawnArray.splice(idx, 1);
+    }
+}
+
 // Function to stop drawing and store the path in drawnArray.
 function stopDrawing() {
     isDrawing = false;
@@ -452,26 +461,13 @@ function stopDrawing() {
 
     if (curDrawing.length !== 0) {
         if (shape === "objectEraser") {
-            // sort the array in ascending order.
+            // sort the curDrawing array in ascending order.
             curDrawing.sort((a, b) => a - b);
 
-            // update the curDrawing: storing index and its content.
-            for (let i = curDrawing.length - 1; i >= 0; i--) {
-                const idx = curDrawing[i];
-
-                curDrawing[i] = {
-                    shape: "objectEraser",
-                    index: idx,
-                    content: drawnArray[idx],
-                }
-                drawnArray.splice(idx, 1);
-            }
+            modifyCurrentDrawingArray();
         }
         // store path.
         drawnArray.push(curDrawing);
-
-        // console.log(drawnArray);
-        // console.log(curDrawing);
 
         repaintHandler(1, 1);
         curDrawing = [];
@@ -673,7 +669,7 @@ function prevPageHandler() {
         nextAndAddPageButton.innerHTML = "Next";
     }
 
-    console.log("prev", curPageNo, pages.length);
+    // console.log("prev", curPageNo, pages.length);
 
     // update the current page.
     updateCurrentPageHandler();
@@ -696,7 +692,7 @@ function resizeHandler() {
     const ratioWidth = window.innerWidth / canvas.width;
     const ratioHeight = window.innerHeight / canvas.height;
 
-    // console.log(canvas.width);
+    console.log("resizeHandler", ratioWidth, ratioHeight);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -719,8 +715,67 @@ function calculateZoom(event) {
     return scaleFactor;
 }
 
+
+// function makeCursorInCenter(event) {
+
+//     // to: center
+//     // from: cursor
+
+
+//     const rect = canvas.getBoundingClientRect();
+//     const scaleX = canvas.width / rect.width; // horizontal scale factor
+//     const scaleY = canvas.height / rect.height; // vertical scale factor
+
+//     // to: center
+//     const centerX = rect.left + rect.width / 2;
+//     const centerY = rect.top + rect.height / 2;
+
+//     console.log("center", centerX, centerY);
+//     console.log(rect.left, rect.width, rect.top, rect.height);
+
+//     // from: cursor
+//     const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
+//     // console.log(curX, curY);
+
+
+//     // const translateX = (centerX - curX) * scaleFactor;
+//     // const translateY = (centerY - curY) * scaleFactor;
+
+//     const translateX = (startX - curX) * scaleFactor;
+//     const translateY = (scaleY - curY) * scaleFactor;
+
+//     // window.scrollBy({ translateX, translateY });
+
+//     window.scrollBy({
+//         left: translateX,
+//         top: translateY,
+//         behavior: 'auto'
+//     });
+
+//     // xyz();
+// }
+
+function makeCursorInCenter(event) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width; // horizontal scale factor
+    const scaleY = canvas.height / rect.height; // vertical scale factor
+
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // const cursorX = centerX * scaleX;
+    // const cursorY = centerY * scaleY;
+    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
+    console.log(curX, curY);
+
+    const translateX = (startX - curX) * scaleFactor;
+    const translateY = (startY - curY) * scaleFactor;
+
+    window.scrollBy(translateX, translateY);
+}
+
 // function to scale the canvas.
-function scaleCanvas(scaleFactor) {
+function scaleCanvas(scaleFactor, event) {
     if (scaleFactor > 1) {
         canvas.style.marginTop = `${canvas.height * (scaleFactor - 1) * 0.5 - 4 * scaleFactor}px`;
         canvas.style.marginLeft = `${canvas.width * (scaleFactor - 1) * 0.5 - 7 * scaleFactor}px`;
@@ -729,14 +784,15 @@ function scaleCanvas(scaleFactor) {
         canvas.style.marginLeft = `${0}px`;
     }
     canvas.style.transform = `scale(${scaleFactor})`;
-    // printCoordinates(scaleFactor, scaleFactor);
+    makeCursorInCenter(event);
+
 }
 
 // function to handle the zoom in and zoom out.
 function zoomHandler(event) {
     if (event.ctrlKey === true || shape === "zoomIn" || shape === "zoomOut") {
         const scale = calculateZoom(event);
-        scaleCanvas(scale);
+        scaleCanvas(scale, event);
     }
 }
 
