@@ -129,7 +129,7 @@
                     <div class="flex justify-between items-center gap-2 py-2">
                         <label for="strokeColor" class="text-sm"><i class="fa-solid fa-paintbrush"></i></label>
                         <div class="rounded-full overflow-hidden w-8 h-8 relative border-4">
-                            <input onchange="colorPickerHandler(event)" type="color" name="strokeColor" id="strokeColor"
+                            <input oninput="colorPickerHandler(event)" type="color" name="strokeColor" id="strokeColor"
                                 value="#000000" class="h-10 w-10 absolute -top-[25%] -left-[25%] cursor-pointer">
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                             <i class="fa-solid fa-paint-roller"></i>
                         </label>
                         <div class="rounded-full overflow-hidden w-8 h-8 relative border-4">
-                            <input onchange="colorPickerHandler(event)" type="color" name="backgroundColor"
+                            <input oninput="colorPickerHandler(event)" type="color" name="backgroundColor"
                                 id="backgroundColor" value="#9ca3af"
                                 class="h-10 w-10 absolute -top-[25%] -left-[25%] cursor-pointer">
                         </div>
@@ -163,7 +163,7 @@
             </div>
             <div class="flex justify-end">
                 <button onclick="deletePageHandler()"
-                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold"
+                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold hidden"
                     data-deletePageButton>Delete</button>
                 <button onclick="clearPageHandler()"
                     class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold"

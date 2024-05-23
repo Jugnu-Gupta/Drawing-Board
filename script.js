@@ -74,7 +74,8 @@ let scaleFactor = pages[curPageNo].scaleFactor;
 
 function toolbarOptionHandler(option) {
     const curPage = pages[curPageNo];
-    console.log(toolbarOptionsObject[option]);
+    // console.log(toolbarOptionsObject[option]);
+
     if (option === "multipleShapes" || option === "zoom" || option === "lineWidth" || option === "colorPicker" || option === "eraser") {
         // console.log("hello", option);
         toggleListHandler(option);
@@ -157,6 +158,7 @@ function colorPickerHandler(event) {
         strokeColor = event.target.value;
     }
     else if (event.target.name === 'backgroundColor') {
+        console.log(event.target.value);
         backgroundColor = event.target.value;
         canvas.style.backgroundColor = backgroundColor;
         repaintHandler(1, 1);
@@ -566,6 +568,7 @@ function deletePageHandler() {
     }
     if (curPageNo === 1 && pages.length === 2) {
         prevPageButton.classList.add("hidden");
+        deletePageButton.classList.add("hidden");
     }
     console.log(curPageNo, pages.length);
 
@@ -618,6 +621,9 @@ function nextAndAddPageHandler() {
     }
     if (curPageNo === 0) {
         prevPageButton.classList.remove("hidden");
+    }
+    if (pages.length === 1) {
+        deletePageButton.classList.remove("hidden");
     }
     // console.log("next", curPageNo, pages.length);
 
