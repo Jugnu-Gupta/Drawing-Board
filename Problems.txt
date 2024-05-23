@@ -21,4 +21,7 @@ Q scroll: scrollBy change in coordinates.
 
 Q resize: ratio
 
-Q To dr
+Q ZoomInOut:
+
+
+Q Eraser: 

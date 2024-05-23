@@ -50,64 +50,76 @@
             </button> -->
 
             <!-- pen -->
-            <button onclick="shapeHandler(`pen`, event)" class="bg-gray-400 rounded-full px-2 py-1" data-pen>
+            <button onclick="shapeAndToolHandler(`pen`, event)" class="bg-gray-400 rounded-full px-2 py-1" data-pen>
                 <i class="fa-solid fa-pen"></i>
             </button>
 
 
             <!-- Eraser -->
-            <button onclick="shapeHandler(`eraser`, event)" class="rounded-full px-2 py-1" data-eraser>
+            <button onclick="toolbarOptionHandler(`eraser`)" class="relative rounded-full px-2 py-1"
+                data-eraserContainer>
                 <i class="fa-solid fa-eraser"></i>
+                <div class="absolute top-0 -left-2/3 bg-blue-400 
+                slideUp flex flex-col rounded-xl" data-eraser>
+                    <i onclick="shapeAndToolHandler(`basicEraser`,event)" class="fa-solid fa-eraser p-2 px-3 pt-3"></i>
+                    <div onclick="shapeAndToolHandler(`objectEraser`,event)" class="p-2 px-3 pb-3">
+                        <i class="fa-solid fa-eraser border-2 border-dashed rounded-full p-[2px]"></i>
+                    </div>
+                </div>
             </button>
 
 
             <!-- multiple shapes -->
-            <button onclick="selectOptionHandler(`multipleShapes`)" class="relative rounded-full px-2 py-1"
+            <button onclick="toolbarOptionHandler(`multipleShapes`)" class="relative rounded-full px-2 py-1"
                 data-multipleShapes>
                 <i class="relative z-10 fa-solid fa-shapes"></i>
                 <div class="absolute -top-[150%] -left-2/3 bg-blue-400 
                 slideUp flex flex-col rounded-xl" data-ListOfShapes>
 
-                    <i onclick="shapeHandler(`straightLine`,event)" class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
-                    <i onclick="shapeHandler(`circle`,event)" class="fa-regular fa-circle p-2 px-1"></i>
-                    <i onclick="shapeHandler(`solidCircle`,event)" class="fa-solid fa-circle p-2 px-1"></i>
-                    <i onclick="shapeHandler(`rectangle`,event)" class="fa-regular fa-square p-2 px-3"></i>
-                    <i onclick="shapeHandler(`solidRectangle`,event)" class="fa-solid fa-square p-2 px-3 pb-3"></i>
+                    <i onclick="shapeAndToolHandler(`straightLine`,event)"
+                        class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
+                    <i onclick="shapeAndToolHandler(`circle`,event)" class="fa-regular fa-circle p-2 px-1"></i>
+                    <i onclick="shapeAndToolHandler(`solidCircle`,event)" class="fa-solid fa-circle p-2 px-1"></i>
+                    <i onclick="shapeAndToolHandler(`rectangle`,event)" class="fa-regular fa-square p-2 px-3"></i>
+                    <i onclick="shapeAndToolHandler(`solidRectangle`,event)"
+                        class="fa-solid fa-square p-2 px-3 pb-3"></i>
                 </div>
             </button>
 
 
             <!-- Zoom -->
-            <button onclick="selectOptionHandler(`zoom`)" class="relative rounded-full px-2 py-1" data-zoom>
+            <button onclick="toolbarOptionHandler(`zoom`)" class="relative rounded-full px-2 py-1" data-zoom>
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <div class="absolute top-0 -left-2/3 bg-blue-400 
                 slideUp flex flex-col rounded-xl" data-zoomInOut>
 
-                    <i onclick="shapeHandler(`zoomIn`,event)"
+                    <i onclick="shapeAndToolHandler(`zoomIn`,event)"
                         class="fa-solid fa-magnifying-glass-plus p-2 px-3 pt-3"></i>
-                    <i onclick="shapeHandler(`zoomOut`,event)" class="fa-solid fa-magnifying-glass-minus p-2 px-1"></i>
+                    <i onclick="shapeAndToolHandler(`zoomOut`,event)"
+                        class="fa-solid fa-magnifying-glass-minus p-2 px-1"></i>
                 </div>
             </button>
 
 
             <!-- hand -->
-            <button onclick="shapeHandler(`hand`,event)" class="rounded-full px-2 py-1" data-hand>
+            <button onclick="shapeAndToolHandler(`hand`,event)" class="rounded-full px-2 py-1" data-hand>
                 <i class="fa-solid fa-hand"></i>
             </button>
 
 
             <!-- pen-width -->
-            <button onclick="selectOptionHandler(`lineWidth`)" class="relative rounded-full px-2 py-1" data-strokeWidth>
+            <button onclick="toolbarOptionHandler(`lineWidth`)" class="relative rounded-full px-2 py-1"
+                data-strokeWidth>
                 <i class="fa-solid fa-pen-ruler"></i>
                 <div class="absolute top-[50%] -left-[350%] bg-blue-400 rounded-xl slideUp px-3 w-32" data-lineWidth>
-                    <input onchange="slideHandler(event)" type="range" name="slider" min="1" max="10" step="1" value="2"
-                        class="py-3 w-full" data-lineWidthSlider>
+                    <input onchange="lineWidthAdjustmentHandler(event)" type="range" name="slider" min="1" max="10"
+                        step="1" value="2" class="py-3 w-full" data-lineWidthSlider>
                 </div>
             </button>
 
 
             <!-- color picker -->
-            <button onclick="selectOptionHandler(`colorPicker`)" class="relative rounded-full px-2 py-1"
+            <button onclick="toolbarOptionHandler(`colorPicker`)" class="relative rounded-full px-2 py-1"
                 data-colorPickerConatiner>
                 <i class="fa-solid fa-palette"></i>
                 <div onclick="colorPickerHandler(event)"
