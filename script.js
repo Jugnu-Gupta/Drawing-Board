@@ -705,9 +705,9 @@ function calculateZoom(event) {
     console.log(zoomOut);
 
     if (zoomOut) {
-        scaleFactor = Math.max(scaleFactor - zoomSpeed, 1);
-    } else {
         scaleFactor = Math.min(scaleFactor + zoomSpeed, 10);
+    } else {
+        scaleFactor = Math.max(scaleFactor - zoomSpeed, 1);
     }
 
     return scaleFactor;
