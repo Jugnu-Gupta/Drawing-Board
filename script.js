@@ -24,37 +24,40 @@ const toolbarOptionsObject = {
     colorPicker: { name: dataColorPickerConatiner, child: dataColorPicker },
 };
 
+
 // Get the canvas element
 const canvas = document.querySelector(".canvas");
 const context = canvas.getContext("2d");
 context.imageSmoothingEnabled = true;
 context.imageSmoothingQuality = 'high';
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// footer
-// const clearPageButton = document.querySelector("[data-clearPageButton]");
 const deletePageButton = document.querySelector("[data-deletePageButton]");
 const prevPageButton = document.querySelector("[data-prevPageButton]");
 const nextAndAddPageButton = document.querySelector("[data-nextAndAddPageButton]");
-
-// const notesContainer = document.querySelector("[data-notesConatiner]");
-
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const container = document.querySelector("[data-container]");
+const dataNote = document.querySelector('[data-note]');
 
 // Variables to track the drawing state
 let pages = [{
     backgroundColor: '#9ca3af',
     drawnArray: [],
     redoArray: [],
-    scaleFactor: 1.0,
 }];
 let curPageNo = 0;
 
+// note
 let notes = {};
 let noteNo = 0;
-console.log("script.js", notes);
+let zIndexPriority = 0;
+let curNoteNo = '';
+let curNoteOffsetX = 0;
+let curNoteOffsetY = 0;
 
+// zoom
+const zoomSpeed = 0.2;
+let scaleFactor = 1.0;
 
 // Variables to keep track of the current page.
 let isDrawing = false;
@@ -73,10 +76,6 @@ let drawnArray = pages[curPageNo].drawnArray;
 let redoArray = pages[curPageNo].redoArray;
 let offsetX = 0;
 let offsetY = 0;
-
-// zoom
-const zoomSpeed = 0.2;
-let scaleFactor = pages[curPageNo].scaleFactor;
 
 
 function toolbarOptionHandler(option) {
@@ -567,9 +566,11 @@ function redoHandler() {
     repaintHandler(1, 1);
 }
 
+// function to delete the current page.
 function deletePageHandler() {
     if (curPageNo === pages.length - 2) {
-        nextAndAddPageButton.innerHTML = "Add";
+        nextAndAddPageButton?.children[0].classList.add("fa-plus");
+        nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
     }
     if (curPageNo === 1 && pages.length === 2) {
         prevPageButton.classList.add("hidden");
@@ -588,11 +589,9 @@ function deletePageHandler() {
     drawnArray = pages[curPageNo].drawnArray;
     redoArray = pages[curPageNo].redoArray;
     backgroundColor = pages[curPageNo].backgroundColor;
-    scaleFactor = pages[curPageNo].scaleFactor;
 
     // update the canvas.
     canvas.style.backgroundColor = backgroundColor;
-    scaleCanvas(scaleFactor);
     repaintHandler(1, 1);
 }
 
@@ -601,16 +600,9 @@ function updateCurrentPageHandler() {
     pages[curPageNo].drawnArray = drawnArray;
     pages[curPageNo].redoArray = redoArray;
     pages[curPageNo].backgroundColor = backgroundColor;
-    pages[curPageNo].scaleFactor = scaleFactor;
 }
 
-// function updateVariablesOnPageChangeHandler() {
-//     drawnArray = pages[curPageNo].drawnArray;
-//     redoArray = pages[curPageNo].redoArray;
-//     backgroundColor = pages[curPageNo].backgroundColor;
-//     scaleFactor = pages[curPageNo].scaleFactor;
-// }
-
+// function to clear the current page.
 function clearPageHandler() {
     pages[curPageNo].drawnArray = [];
     pages[curPageNo].redoArray = [];
@@ -622,7 +614,8 @@ function clearPageHandler() {
 // function to move to the next page and add new page.
 function nextAndAddPageHandler() {
     if (curPageNo === pages.length - 2) {
-        nextAndAddPageButton.innerHTML = "Add";
+        nextAndAddPageButton?.children[0].classList.add("fa-plus");
+        nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
     }
     if (curPageNo === 0) {
         prevPageButton.classList.remove("hidden");
@@ -641,14 +634,12 @@ function nextAndAddPageHandler() {
             drawnArray: [],
             redoArray: [],
             backgroundColor: backgroundColor,
-            scaleFactor: 1,
         });
         curPageNo++;
 
         // update the global variables.
         drawnArray = [];
         redoArray = [];
-        scaleFactor = 1;
     }
     // move to the next page.
     else {
@@ -657,14 +648,12 @@ function nextAndAddPageHandler() {
         drawnArray = pages[curPageNo].drawnArray;
         redoArray = pages[curPageNo].redoArray;
         backgroundColor = pages[curPageNo].backgroundColor;
-        scaleFactor = pages[curPageNo].scaleFactor;
 
         // update the canvas.
         canvas.style.backgroundColor = backgroundColor;
     }
 
     // reset the canvas.
-    scaleCanvas(scaleFactor);
     repaintHandler(1, 1);
 }
 
@@ -675,7 +664,12 @@ function prevPageHandler() {
         prevPageButton.classList.add("hidden");
     }
     if (curPageNo === pages.length - 1) {
-        nextAndAddPageButton.innerHTML = "Next";
+        // nextAndAddPageButton
+        console.log(nextAndAddPageButton);
+        // console.log(nextAndAddPageButton?.children[0]);
+        nextAndAddPageButton?.children[0].classList.remove("fa-plus");
+        nextAndAddPageButton?.children[0]?.classList.add("fa-arrow-right");
+        // nextAndAddPageButton.innerHTML = "Next";
     }
 
     // console.log("prev", curPageNo, pages.length);
@@ -688,11 +682,9 @@ function prevPageHandler() {
     drawnArray = pages[curPageNo].drawnArray;
     redoArray = pages[curPageNo].redoArray;
     backgroundColor = pages[curPageNo].backgroundColor;
-    scaleFactor = pages[curPageNo].scaleFactor;
 
     // update the canvas.
     canvas.style.backgroundColor = backgroundColor;
-    scaleCanvas(scaleFactor);
     repaintHandler(1, 1);
 }
 
@@ -724,25 +716,6 @@ function calculateZoom(event) {
     return scaleFactor;
 }
 
-function makeCursorInCenter(event) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width; // horizontal scale factor
-    const scaleY = canvas.height / rect.height; // vertical scale factor
-
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    // const cursorX = centerX * scaleX;
-    // const cursorY = centerY * scaleY;
-    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
-    console.log(curX, curY);
-
-    const translateX = (startX - curX) * scaleFactor;
-    const translateY = (startY - curY) * scaleFactor;
-
-    window.scrollBy(translateX, translateY);
-}
-
 // function to scale the canvas.
 function scaleCanvas(scaleFactor, event) {
     if (scaleFactor > 1) {
@@ -753,7 +726,13 @@ function scaleCanvas(scaleFactor, event) {
         canvas.style.marginLeft = `${0}px`;
     }
     canvas.style.transform = `scale(${scaleFactor})`;
-    makeCursorInCenter(event);
+
+
+    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
+    const translateX = (startX - curX) * scaleFactor;
+    const translateY = (startY - curY) * scaleFactor;
+
+    window.scrollBy(translateX, translateY);
 }
 
 // function to handle the zoom in and zoom out.
@@ -767,8 +746,6 @@ function zoomHandler(event) {
 
 // Function to adjust the coordinates based on the canvas position and zoom factor.
 function adjustCoordinates(x, y) {
-    // getBoundingClientRect method providing information about the size of an element and its position 
-    // relative to the viewport. It includes properties such as top, right, bottom, left, width, and height.
     const rect = canvas.getBoundingClientRect();
 
     // Adjust coordinates based on canvas position and zoom factor
@@ -782,7 +759,6 @@ function adjustCoordinates(x, y) {
     return [x, y];
 }
 
-// document.addEventListener('click', (event) => { console.log(event.clientX + " " + event.clientY), console.log(scaleFactor) });
 
 // Add event listeners for drawing.
 canvas.addEventListener('mousedown', startDrawing);
@@ -796,20 +772,18 @@ canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('touchcancel', stopDrawing);
 window.addEventListener('resize', resizeHandler);
 canvas.addEventListener('click', zoomHandler);
-// canvas.parentElement.addEventListener('wheel', zoomHandler);
 
 
+function saveImage() {
+    const dataURL = canvas.toDataURL('image/png');
 
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-// new features
-// console.log(document.getElementById("notesConatiner"));
-// console.log('hello', document.querySelector("[data-notesContainer]"));
-const notesContainer = document.querySelector("[data-notesContainer]");
+    // create a link.
+    const link = document.createElement('a');
+    link.href = dataURL;
 
-let left = 0, up = 0;
-let curNoteNo = '';
-const dataNote = document.querySelector('[data-note]');
-
+    link.download = 'image.png';
+    link.click();
+}
 
 function deleteNoteHandler(event) {
     const id = event.target.parentElement.parentElement.id;
@@ -818,8 +792,7 @@ function deleteNoteHandler(event) {
     delete notes[id];
     document.getElementById(id).remove();
 
-    // notes[id].removeEventListener('click', deleteNoteHandler);
-    console.log("deleteNoteHandler", event.target.parentElement.parentElement);
+    // console.log("deleteNoteHandler", event.target.parentElement.parentElement);
 }
 
 
@@ -827,11 +800,8 @@ function minimiseNoteHandler(event) {
     const textArea = event.target.parentElement.parentElement.children[1];
     textArea.classList.toggle('hidden');
 
-    console.log("minimiseNoteHandler", event.target.parentElement.parentElement.children[1]);
+    // console.log("minimiseNoteHandler", event.target.parentElement.parentElement.children[1]);
 }
-
-
-let zIndex = 0;
 
 function addNoteHandler() {
     console.log("addNoteHandler", notes);
@@ -843,42 +813,43 @@ function addNoteHandler() {
     newNote.classList.remove('hidden');
 
     notes[id] = newNote;
-    console.log(newNote.children);
+    // console.log(newNote.children);
 
-    notesContainer.appendChild(notes[id]);
+    container.appendChild(notes[id]);
 
-    // console.log(notesContainer);
+    // console.log(container);
     noteNo++;
 }
 
 function startNoteDrag(event) {
     let target;
-    if (event.target.id === 'notesContainer') {
-        console.log("notesContainer");
+    // console.log(event.target);
+
+    // find the target element.
+    if (event.target.id === 'container' || event.target.nodeName === 'CANVAS') {
         return;
     }
-    else if (event.target.nodeName === 'TEXTAREA' || (event.target.nodeName === 'DIV' && event.target.id !== 'data-note')) {
-        console.log("TEXTAREA");
+    else if (event.target.nodeName === 'TEXTAREA' || (event.target.nodeName === 'DIV' && event.target.parentElement.id !== 'container')) {
         target = event.target.parentElement;
     }
     else if (event.target.nodeName === 'INPUT') {
-        console.log("INPUT");
         target = event.target.parentElement.parentElement;
     }
     else {
-        console.log("ELSE");
         target = event.target;
     }
 
 
-    target.style.zIndex = `${zIndex++}`;
-    console.log("target", target.classList);
-    // console.log(target);
-    const rect = target.getBoundingClientRect();
-    left = event.clientX - rect.left;
-    up = event.clientY - rect.top;
+    // update the z-index.
+    target.style.zIndex = `${zIndexPriority++}`;
 
-    console.log(left, up);
+
+    // console.log("target", target.classList);
+    const rect = target.getBoundingClientRect();
+    curNoteOffsetX = event.clientX - rect.left;
+    curNoteOffsetY = event.clientY - rect.top;
+
+    // console.log(curNoteOffsetX, curNoteOffsetY);
 
     // get note id
     curNoteNo = target.id;
@@ -886,33 +857,24 @@ function startNoteDrag(event) {
 
 
 function noteDragHandler(event) {
-    // console.log("note", curNoteNo);
     if (curNoteNo === '') return;
 
-    // const id = event.target.id;
     const id = curNoteNo;
-
-    // console.log(note[curNote].classList);
-
-    const x = event.clientX - left;
-    const y = event.clientY - up;
-    // console.log(x, y);
+    const x = event.clientX - curNoteOffsetX;
+    const y = event.clientY - curNoteOffsetY;
 
     notes[id].style.left = `${x}px`;
     notes[id].style.top = `${y}px`;
-    // console.log("noteDragHandler", event);
 }
 
 function stopNoteDrag() {
     curNoteNo = '';
 }
 
-// console.log(notesContainer);
-notesContainer.addEventListener('mousedown', startNoteDrag);
-notesContainer.addEventListener('mousemove', noteDragHandler);
-notesContainer.addEventListener('mouseup', stopNoteDrag);
+container.addEventListener('mousedown', startNoteDrag);
+container.addEventListener('mousemove', noteDragHandler);
+container.addEventListener('mouseup', stopNoteDrag);
 
-
-// var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
-// window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
-// document.body.addEventListener('wheel', (event) => event.preventDefault())
+container.addEventListener('touchstart', startNoteDrag);
+container.addEventListener('touchmove', noteDragHandler);
+container.addEventListener('touchend', stopNoteDrag);

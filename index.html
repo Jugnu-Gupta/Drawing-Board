@@ -51,22 +51,20 @@
 </head>
 
 <body>
-    <!-- <div class="h-[100vh] w-full bg-red-100 flex justify-center"> -->
-    <div class="h-[100vh] w-full bg-red-100">
+    <div class="relative h-[100vh] w-full bg-red-100" id="container" data-container>
 
-        <aside class="fixed z-10 top-4 left-1/2 -translate-x-1/2 flex justify-center 
-            gap-8 py-2 px-4 rounded-xl bg-blue-400 text-white ">
 
-            <!-- <button onclick="printCoordinates(0,0)" change>kjbj
-            </button> -->
+        <!-- toolbar -->
+        <aside class="fixed z-[1000000] top-4 left-1/2 -translate-x-1/2 flex justify-center 
+            gap-8 py-2 px-4 rounded-xl bg-blue-400 text-white" data-aside>
 
-            <!-- pen -->
+            <!-- pen button -->
             <button onclick="shapeAndToolHandler(`pen`, event)" class="bg-gray-400 rounded-full px-2 py-1" data-pen>
                 <i class="fa-solid fa-pen"></i>
             </button>
 
 
-            <!-- Eraser -->
+            <!-- Eraser button -->
             <button onclick="toolbarOptionHandler(`eraser`)" class="relative rounded-full px-2 py-1"
                 data-eraserContainer>
                 <i class="fa-solid fa-eraser"></i>
@@ -80,7 +78,7 @@
             </button>
 
 
-            <!-- multiple shapes -->
+            <!-- multiple shapes button -->
             <button onclick="toolbarOptionHandler(`multipleShapes`)" class="relative rounded-full px-2 py-1"
                 data-multipleShapes>
                 <i class="relative z-10 fa-solid fa-shapes"></i>
@@ -98,7 +96,7 @@
             </button>
 
 
-            <!-- Zoom -->
+            <!-- Zoom button-->
             <button onclick="toolbarOptionHandler(`zoom`)" class="relative rounded-full px-2 py-1" data-zoom>
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <div class="absolute top-0 -left-2/3 bg-blue-400 
@@ -112,13 +110,13 @@
             </button>
 
 
-            <!-- hand -->
+            <!-- hand button-->
             <button onclick="shapeAndToolHandler(`hand`,event)" class="rounded-full px-2 py-1" data-hand>
                 <i class="fa-solid fa-hand"></i>
             </button>
 
 
-            <!-- pen-width -->
+            <!-- pen-width slider -->
             <button onclick="toolbarOptionHandler(`lineWidth`)" class="relative rounded-full px-2 py-1"
                 data-strokeWidth>
                 <i class="fa-solid fa-pen-ruler"></i>
@@ -129,7 +127,7 @@
             </button>
 
 
-            <!-- color picker -->
+            <!-- color picker button -->
             <button onclick="toolbarOptionHandler(`colorPicker`)" class="relative rounded-full px-2 py-1"
                 data-colorPickerConatiner>
                 <i class="fa-solid fa-palette"></i>
@@ -159,68 +157,70 @@
             </button>
 
 
-            <!-- note -->
+            <!-- note button -->
             <button onclick="addNoteHandler()"><i class="fa-solid fa-notes-medical"></i></button>
         </aside>
 
-        <canvas class="canvas relative top-0 bg-gray-400 w-full h-[100%]">
+
+        <!-- canvas -->
+        <canvas class="canvas relative top-0 bg-gray-400 w-full h-[100%] z-0">
         </canvas>
 
-        <div class="absolute -top-[100%] -left-[100%] w-full h-full z-[5]" id="notesContainer" data-notesContainer>
-            <!-- <div class="absolute top-0 left-0 w-full h-full z-[5]" id="notesContainer" data-notesContainer> -->
 
-            <div class="absolute top-[calc(150%-70px)] left-[calc(150%-96px)] hidden flex-col bg-white shadow-[0px_0px_4px_rgba(0,0,0,.5)] w-48"
-                id="data-note" data-note>
-                <div class="flex justify-between items-center bg-gray-100">
-                    <input type="text" value="" placeholder="Note..."
-                        class="outline-none font-bold bg-gray-200 w-2/3 m-1">
-                    <i onclick="minimiseNoteHandler(event)"
-                        class="fa-solid fa-minus text-[9px] bg-green-500 text-white rounded-full p-[3px] py-[3px] ml-3"></i>
-                    <i onclick="deleteNoteHandler(event)"
-                        class="fa-solid fa-x text-[9px] bg-red-500 text-white rounded-full p-1 py-[3px] mr-1"></i>
-                </div>
-                <textarea name="textbox" id="textbox" rows="5" cols="30" class="outline-none text-sm px-1 w-full h-24"
-                    placeholder="type here..."></textarea>
-            </div>
-        </div>
-
-        <!-- <div class="absolute top-[50%] left-[50%] flex flex-col bg-white shadow-[0px_0px_4px_rgba(0,0,0,.5)] w-48"
-            data-note>
+        <!-- dummy note -->
+        <div class="absolute top-[calc(50%-66px)] left-[calc(50%-96px)] hidden flex-col bg-white shadow-[0px_0px_4px_rgba(0,0,0,.5)] w-48"
+            id="data-note" data-note>
             <div class="flex justify-between items-center bg-gray-100">
-                <input type="text" value="" placeholder=" Note..." class="outline-none font-bold bg-gray-200 w-2/3 m-1">
+                <input type="text" value="" placeholder="Note..." class="outline-none font-bold bg-gray-200 w-2/3 m-1">
                 <i onclick="minimiseNoteHandler(event)"
                     class="fa-solid fa-minus text-[9px] bg-green-500 text-white rounded-full p-[3px] py-[3px] ml-3"></i>
                 <i onclick="deleteNoteHandler(event)"
                     class="fa-solid fa-x text-[9px] bg-red-500 text-white rounded-full p-1 py-[3px] mr-1"></i>
             </div>
-            <textarea name="textbox" id="textbox" rows="5" cols="10" class="outline-none text-sm px-1"
+            <textarea name="textbox" id="textbox" rows="5" cols="30" class="outline-none text-sm px-1 w-full h-24"
                 placeholder="type here..."></textarea>
-        </div> -->
+        </div>
 
-        <footer class="fixed w-full z-10 bottom-0 px-4 py-2 bg-blue-400 flex justify-between">
-            <div class="flex justify-start">
-                <button onclick="undoHandler()"
-                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold">undo</button>
-                <button onclick="redoHandler()"
-                    class="px-4 py-1 border-2 rounded-full text-white font-semibold">redo</button>
+
+        <button onclick="saveImage()" class="bg-blue-400 absolute top-4 right-4 rounded-full p-2" data-saveButton>
+            <img src="./assets/download-file.png" alt="Delete page" class="border-2 rounded-full p-1 w-7">
+        </button>
+
+
+        <footer class="fixed w-full z-[1000000] bottom-0 px-4 py-2 bg-blue-400 flex justify-between">
+            <div class="flex justify-start" data-footer>
+                <!-- undo button -->
+                <button onclick="undoHandler()" class="text-white mr-2">
+                    <i class="fa-solid fa-arrow-rotate-left border-2 rounded-full p-1"></i></button>
+
+                <!-- redo button -->
+                <button onclick="redoHandler()" class="text-white">
+                    <i class="fa-solid fa-arrow-rotate-right border-2 rounded-full p-1"></i></button>
             </div>
+
             <div class="flex justify-end">
-                <button onclick="deletePageHandler()"
-                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold hidden"
-                    data-deletePageButton>Delete</button>
-                <button onclick="clearPageHandler()"
-                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold"
-                    data-clearPageButton>Clear</button>
-                <button onclick="prevPageHandler()"
-                    class="px-4 py-1 mr-2 border-2 rounded-full text-white font-semibold hidden"
-                    data-prevPageButton>Prev</button>
-                <button onclick="nextAndAddPageHandler()"
-                    class="px-4 py-1 border-2 rounded-full text-white font-semibold"
-                    data-nextAndAddPageButton>Add</button>
+                <!-- delete button -->
+                <button onclick="deletePageHandler()" class="mr-2 hidden" data-deletePageButton>
+                    <img src="./assets/bin.png" alt="Delete page" class="border-2 rounded-full p-1 w-7"></button>
+
+                <!-- clear button -->
+                <button onclick="clearPageHandler()" class="mr-2" data-clearPageButton>
+                    <img src="./assets/broom.png" alt="Clear page" class="border-2 rounded-full p-1 w-7"></button>
+
+                <!-- prev button -->
+                <!-- <button onclick="prevPageHandler()" class="px-4 py-1 mr-2 border-2 rounded-full hidden text-white"
+                            data-prevPageButton><i class="fa-solid fa-arrow-left"></i></button> -->
+                <button onclick="prevPageHandler()" class="mr-2 hidden text-white" data-prevPageButton><i
+                        class="fa-solid fa-arrow-left p-1 border-2 rounded-full"></i></button>
+
+                <!-- add/next button -->
+                <button onclick="nextAndAddPageHandler()" class="text-white" data-nextAndAddPageButton>
+                    <i class="fa-solid fa-plus border-2 rounded-full p-1"></i></button>
             </div>
         </footer>
     </div>
 
+    <!-- scripts -->
     <script src="script.js"></script>
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <script src="https://kit.fontawesome.com/848e0df24d.js" crossorigin="anonymous"></script>
