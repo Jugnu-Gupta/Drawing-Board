@@ -1,5 +1,3 @@
-// const { data } = require("autoprefixer");
-
 const dataPen = document.querySelector('[data-pen]');
 const dataEraser = document.querySelector('[data-eraser]');
 const dataEraserContainer = document.querySelector('[data-eraserContainer]');
@@ -51,6 +49,11 @@ let pages = [{
 }];
 let curPageNo = 0;
 
+let notes = {};
+let noteNo = 0;
+console.log("script.js", notes);
+
+
 // Variables to keep track of the current page.
 let isDrawing = false;
 let isDragging = false;
@@ -70,7 +73,7 @@ let offsetX = 0;
 let offsetY = 0;
 
 // zoom
-const zoomSpeed = 0.1;
+const zoomSpeed = 0.2;
 let scaleFactor = pages[curPageNo].scaleFactor;
 
 
@@ -703,57 +706,17 @@ function resizeHandler() {
 function calculateZoom(event) {
     event.preventDefault();
 
-    const zoomOut = (event.deltaY < 0) || (shape === "zoomOut");
-    console.log(zoomOut);
+    const zoomIn = (event.deltaY < 0) || (shape === "zoomIn");
+    console.log(zoomIn);
 
-    if (zoomOut) {
-        scaleFactor = Math.min(scaleFactor + zoomSpeed, 10);
+    if (zoomIn) {
+        scaleFactor = Math.min(scaleFactor + zoomSpeed, 3);
     } else {
         scaleFactor = Math.max(scaleFactor - zoomSpeed, 1);
     }
 
     return scaleFactor;
 }
-
-
-// function makeCursorInCenter(event) {
-
-//     // to: center
-//     // from: cursor
-
-
-//     const rect = canvas.getBoundingClientRect();
-//     const scaleX = canvas.width / rect.width; // horizontal scale factor
-//     const scaleY = canvas.height / rect.height; // vertical scale factor
-
-//     // to: center
-//     const centerX = rect.left + rect.width / 2;
-//     const centerY = rect.top + rect.height / 2;
-
-//     console.log("center", centerX, centerY);
-//     console.log(rect.left, rect.width, rect.top, rect.height);
-
-//     // from: cursor
-//     const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
-//     // console.log(curX, curY);
-
-
-//     // const translateX = (centerX - curX) * scaleFactor;
-//     // const translateY = (centerY - curY) * scaleFactor;
-
-//     const translateX = (startX - curX) * scaleFactor;
-//     const translateY = (scaleY - curY) * scaleFactor;
-
-//     // window.scrollBy({ translateX, translateY });
-
-//     window.scrollBy({
-//         left: translateX,
-//         top: translateY,
-//         behavior: 'auto'
-//     });
-
-//     // xyz();
-// }
 
 function makeCursorInCenter(event) {
     const rect = canvas.getBoundingClientRect();
@@ -785,12 +748,11 @@ function scaleCanvas(scaleFactor, event) {
     }
     canvas.style.transform = `scale(${scaleFactor})`;
     makeCursorInCenter(event);
-
 }
 
 // function to handle the zoom in and zoom out.
 function zoomHandler(event) {
-    if (event.ctrlKey === true || shape === "zoomIn" || shape === "zoomOut") {
+    if (shape === "zoomIn" || shape === "zoomOut") {
         const scale = calculateZoom(event);
         scaleCanvas(scale, event);
     }
@@ -828,7 +790,60 @@ canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('touchcancel', stopDrawing);
 window.addEventListener('resize', resizeHandler);
 canvas.addEventListener('click', zoomHandler);
-canvas.parentElement.addEventListener('wheel', zoomHandler);
+// canvas.parentElement.addEventListener('wheel', zoomHandler);
+
+
+function deleteNoteHandler(event) {
+    const id = event.target.parentElement.id;
+    delete notes.id;
+
+    console.log("deleteNoteHandler", event.target.parentElement);
+}
+
+function addNoteHandler() {
+    console.log("addNoteHandler", notes);
+
+    const id = `data-note${noteNo}`;
+
+    const newNote = dataNote.cloneNode(true);
+    newNote.id = id;
+    notes[id] = newNote;
+
+    document.body.appendChild(notes[id]);
+    noteNo++;
+}
+
+let left = 0, up = 0;
+const dataNote = document.querySelector('[data-note]');
+
+dataNote.addEventListener('mousedown', (event) => {
+    notes.push(dataNote);
+    const rect = dataNote.getBoundingClientRect();
+    left = event.clientX - rect.left;
+    up = event.clientY - rect.top;
+    console.log(left, up);
+
+    curNote = 0;
+});
+
+dataNote.addEventListener('mousemove', (event) => {
+    console.log("note", curNote);
+    if (curNote === -1) return;
+
+    // console.log(note[curNote].classList);
+
+    const x = event.clientX - left;
+    const y = event.clientY - up;
+    // console.log(x, y);
+
+    note[curNote].style.left = `${x}px`;
+    note[curNote].style.top = `${y}px`;
+});
+
+
+dataNote.addEventListener('mouseup', () => {
+    curNote = -1;
+});
 
 
 // var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';

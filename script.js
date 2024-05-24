@@ -1,5 +1,3 @@
-// const { data } = require("autoprefixer");
-
 const dataPen = document.querySelector('[data-pen]');
 const dataEraser = document.querySelector('[data-eraser]');
 const dataEraserContainer = document.querySelector('[data-eraserContainer]');
@@ -38,6 +36,8 @@ const deletePageButton = document.querySelector("[data-deletePageButton]");
 const prevPageButton = document.querySelector("[data-prevPageButton]");
 const nextAndAddPageButton = document.querySelector("[data-nextAndAddPageButton]");
 
+// const notesContainer = document.querySelector("[data-notesConatiner]");
+
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -50,6 +50,11 @@ let pages = [{
     scaleFactor: 1.0,
 }];
 let curPageNo = 0;
+
+let notes = {};
+let noteNo = 0;
+console.log("script.js", notes);
+
 
 // Variables to keep track of the current page.
 let isDrawing = false;
@@ -70,7 +75,7 @@ let offsetX = 0;
 let offsetY = 0;
 
 // zoom
-const zoomSpeed = 0.1;
+const zoomSpeed = 0.2;
 let scaleFactor = pages[curPageNo].scaleFactor;
 
 
@@ -191,6 +196,7 @@ function startDrawing(event) {
     [startX, startY] = adjustCoordinates(event.clientX, event.clientY);
 }
 
+
 // function to check if the point is below the line.
 function isPointBelowTheline(line, point) {
     // Eq of line: y-y1 = ((y2-y1)/(x2-x1))*(x-x1);
@@ -198,11 +204,13 @@ function isPointBelowTheline(line, point) {
         (line.X2 - line.X1) * (point.Y - line.Y2) >= 0;
 }
 
+
 // function to check if the point is inside the rectangle.
 function isPointInsideTheRectangle(rectangle, point) {
     return rectangle.X1 <= point.X && point.X <= rectangle.X2 &&
         rectangle.Y1 <= point.Y && point.Y <= rectangle.Y2;
 }
+
 
 // function to check if the point is inside the circle.
 function isPointInsideTheCircle(circle, point) {
@@ -220,6 +228,7 @@ function eraseObject(startX, startY, endX, endY) {
             let shapeInfo = drawnArray[i][j].shape;
             const point1 = { X: startX, Y: startY };
             const point2 = { X: endX, Y: endY };
+
 
             if (shapeInfo?.name === "pen" || shapeInfo?.name === "straightLine") {
                 const line1 = {
@@ -703,57 +712,17 @@ function resizeHandler() {
 function calculateZoom(event) {
     event.preventDefault();
 
-    const zoomOut = (event.deltaY < 0) || (shape === "zoomOut");
-    console.log(zoomOut);
+    const zoomIn = (event.deltaY < 0) || (shape === "zoomIn");
+    console.log(zoomIn);
 
-    if (zoomOut) {
-        scaleFactor = Math.min(scaleFactor + zoomSpeed, 10);
+    if (zoomIn) {
+        scaleFactor = Math.min(scaleFactor + zoomSpeed, 3);
     } else {
         scaleFactor = Math.max(scaleFactor - zoomSpeed, 1);
     }
 
     return scaleFactor;
 }
-
-
-// function makeCursorInCenter(event) {
-
-//     // to: center
-//     // from: cursor
-
-
-//     const rect = canvas.getBoundingClientRect();
-//     const scaleX = canvas.width / rect.width; // horizontal scale factor
-//     const scaleY = canvas.height / rect.height; // vertical scale factor
-
-//     // to: center
-//     const centerX = rect.left + rect.width / 2;
-//     const centerY = rect.top + rect.height / 2;
-
-//     console.log("center", centerX, centerY);
-//     console.log(rect.left, rect.width, rect.top, rect.height);
-
-//     // from: cursor
-//     const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
-//     // console.log(curX, curY);
-
-
-//     // const translateX = (centerX - curX) * scaleFactor;
-//     // const translateY = (centerY - curY) * scaleFactor;
-
-//     const translateX = (startX - curX) * scaleFactor;
-//     const translateY = (scaleY - curY) * scaleFactor;
-
-//     // window.scrollBy({ translateX, translateY });
-
-//     window.scrollBy({
-//         left: translateX,
-//         top: translateY,
-//         behavior: 'auto'
-//     });
-
-//     // xyz();
-// }
 
 function makeCursorInCenter(event) {
     const rect = canvas.getBoundingClientRect();
@@ -785,12 +754,11 @@ function scaleCanvas(scaleFactor, event) {
     }
     canvas.style.transform = `scale(${scaleFactor})`;
     makeCursorInCenter(event);
-
 }
 
 // function to handle the zoom in and zoom out.
 function zoomHandler(event) {
-    if (event.ctrlKey === true || shape === "zoomIn" || shape === "zoomOut") {
+    if (shape === "zoomIn" || shape === "zoomOut") {
         const scale = calculateZoom(event);
         scaleCanvas(scale, event);
     }
@@ -828,7 +796,121 @@ canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('touchcancel', stopDrawing);
 window.addEventListener('resize', resizeHandler);
 canvas.addEventListener('click', zoomHandler);
-canvas.parentElement.addEventListener('wheel', zoomHandler);
+// canvas.parentElement.addEventListener('wheel', zoomHandler);
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+// new features
+// console.log(document.getElementById("notesConatiner"));
+// console.log('hello', document.querySelector("[data-notesContainer]"));
+const notesContainer = document.querySelector("[data-notesContainer]");
+
+let left = 0, up = 0;
+let curNoteNo = '';
+const dataNote = document.querySelector('[data-note]');
+
+
+function deleteNoteHandler(event) {
+    const id = event.target.parentElement.parentElement.id;
+
+    // delete the note.
+    delete notes[id];
+    document.getElementById(id).remove();
+
+    // notes[id].removeEventListener('click', deleteNoteHandler);
+    console.log("deleteNoteHandler", event.target.parentElement.parentElement);
+}
+
+
+function minimiseNoteHandler(event) {
+    const textArea = event.target.parentElement.parentElement.children[1];
+    textArea.classList.toggle('hidden');
+
+    console.log("minimiseNoteHandler", event.target.parentElement.parentElement.children[1]);
+}
+
+
+let zIndex = 0;
+
+function addNoteHandler() {
+    console.log("addNoteHandler", notes);
+
+    const id = `data-note${noteNo}`;
+
+    const newNote = dataNote.cloneNode(true);
+    newNote.id = id;
+    newNote.classList.remove('hidden');
+
+    notes[id] = newNote;
+    console.log(newNote.children);
+
+    notesContainer.appendChild(notes[id]);
+
+    // console.log(notesContainer);
+    noteNo++;
+}
+
+function startNoteDrag(event) {
+    let target;
+    if (event.target.id === 'notesContainer') {
+        console.log("notesContainer");
+        return;
+    }
+    else if (event.target.nodeName === 'TEXTAREA' || (event.target.nodeName === 'DIV' && event.target.id !== 'data-note')) {
+        console.log("TEXTAREA");
+        target = event.target.parentElement;
+    }
+    else if (event.target.nodeName === 'INPUT') {
+        console.log("INPUT");
+        target = event.target.parentElement.parentElement;
+    }
+    else {
+        console.log("ELSE");
+        target = event.target;
+    }
+
+
+    target.style.zIndex = `${zIndex++}`;
+    console.log("target", target.classList);
+    // console.log(target);
+    const rect = target.getBoundingClientRect();
+    left = event.clientX - rect.left;
+    up = event.clientY - rect.top;
+
+    console.log(left, up);
+
+    // get note id
+    curNoteNo = target.id;
+}
+
+
+function noteDragHandler(event) {
+    // console.log("note", curNoteNo);
+    if (curNoteNo === '') return;
+
+    // const id = event.target.id;
+    const id = curNoteNo;
+
+    // console.log(note[curNote].classList);
+
+    const x = event.clientX - left;
+    const y = event.clientY - up;
+    // console.log(x, y);
+
+    notes[id].style.left = `${x}px`;
+    notes[id].style.top = `${y}px`;
+    // console.log("noteDragHandler", event);
+}
+
+function stopNoteDrag() {
+    curNoteNo = '';
+}
+
+// console.log(notesContainer);
+notesContainer.addEventListener('mousedown', startNoteDrag);
+notesContainer.addEventListener('mousemove', noteDragHandler);
+notesContainer.addEventListener('mouseup', stopNoteDrag);
 
 
 // var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';

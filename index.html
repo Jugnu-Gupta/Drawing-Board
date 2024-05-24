@@ -36,6 +36,17 @@
                 transform: scaleY(0);
             }
         }
+
+        body {
+            user-select: none;
+            /* Standard syntax */
+            -webkit-user-select: none;
+            /* Safari */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+        }
     </style>
 </head>
 
@@ -148,11 +159,43 @@
             </button>
 
 
-            <!-- <button><i class="fa-solid fa-notes-medical"></i></button> -->
+            <!-- note -->
+            <button onclick="addNoteHandler()"><i class="fa-solid fa-notes-medical"></i></button>
         </aside>
 
         <canvas class="canvas relative top-0 bg-gray-400 w-full h-[100%]">
         </canvas>
+
+        <div class="absolute -top-[100%] -left-[100%] w-full h-full z-[5]" id="notesContainer" data-notesContainer>
+            <!-- <div class="absolute top-0 left-0 w-full h-full z-[5]" id="notesContainer" data-notesContainer> -->
+
+            <div class="absolute top-[calc(150%-70px)] left-[calc(150%-96px)] hidden flex-col bg-white shadow-[0px_0px_4px_rgba(0,0,0,.5)] w-48"
+                id="data-note" data-note>
+                <div class="flex justify-between items-center bg-gray-100">
+                    <input type="text" value="" placeholder="Note..."
+                        class="outline-none font-bold bg-gray-200 w-2/3 m-1">
+                    <i onclick="minimiseNoteHandler(event)"
+                        class="fa-solid fa-minus text-[9px] bg-green-500 text-white rounded-full p-[3px] py-[3px] ml-3"></i>
+                    <i onclick="deleteNoteHandler(event)"
+                        class="fa-solid fa-x text-[9px] bg-red-500 text-white rounded-full p-1 py-[3px] mr-1"></i>
+                </div>
+                <textarea name="textbox" id="textbox" rows="5" cols="30" class="outline-none text-sm px-1 w-full h-24"
+                    placeholder="type here..."></textarea>
+            </div>
+        </div>
+
+        <!-- <div class="absolute top-[50%] left-[50%] flex flex-col bg-white shadow-[0px_0px_4px_rgba(0,0,0,.5)] w-48"
+            data-note>
+            <div class="flex justify-between items-center bg-gray-100">
+                <input type="text" value="" placeholder=" Note..." class="outline-none font-bold bg-gray-200 w-2/3 m-1">
+                <i onclick="minimiseNoteHandler(event)"
+                    class="fa-solid fa-minus text-[9px] bg-green-500 text-white rounded-full p-[3px] py-[3px] ml-3"></i>
+                <i onclick="deleteNoteHandler(event)"
+                    class="fa-solid fa-x text-[9px] bg-red-500 text-white rounded-full p-1 py-[3px] mr-1"></i>
+            </div>
+            <textarea name="textbox" id="textbox" rows="5" cols="10" class="outline-none text-sm px-1"
+                placeholder="type here..."></textarea>
+        </div> -->
 
         <footer class="fixed w-full z-10 bottom-0 px-4 py-2 bg-blue-400 flex justify-between">
             <div class="flex justify-start">
@@ -179,7 +222,7 @@
     </div>
 
     <script src="script.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <script src="https://kit.fontawesome.com/848e0df24d.js" crossorigin="anonymous"></script>
 
 </body>

@@ -24,4 +24,6 @@ Q resize: ratio
 Q ZoomInOut:
 
 
-Q Eraser: 
+Q Eraser(object): 
+
+Q Drag Note:
