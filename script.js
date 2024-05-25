@@ -41,7 +41,7 @@ const dataNote = document.querySelector('[data-note]');
 
 // Variables to track the drawing state
 let pages = [{
-    backgroundColor: '#9ca3af',
+    backgroundColor: '#ffffff',
     drawnArray: [],
     redoArray: [],
 }];
@@ -71,43 +71,62 @@ let curDrawing = [];
 let toolbarOption = "pen";
 let toggleList = null;
 
+
 let backgroundColor = pages[curPageNo].backgroundColor;
 let drawnArray = pages[curPageNo].drawnArray;
 let redoArray = pages[curPageNo].redoArray;
 let offsetX = 0;
 let offsetY = 0;
 
+function toolbarOptionColorHandler(option) {
+    // bg-gray-200 text-blue-400
+
+    // previous option.
+    toolbarOptionsObject[toolbarOption].name.classList.remove('bg-blue-400');
+    toolbarOptionsObject[toolbarOption].name.classList.remove('text-white');
+    toolbarOptionsObject[toolbarOption].name.classList.add('text-blue-400');
+    toolbarOptionsObject[toolbarOption].name.classList.add('bg-gray-200');
+
+    // selected option.
+    toolbarOptionsObject[option].name.classList.remove('text-blue-400');
+    toolbarOptionsObject[option].name.classList.remove('bg-gray-200');
+    toolbarOptionsObject[option].name.classList.add('bg-blue-400');
+    toolbarOptionsObject[option].name.classList.add('text-white');
+}
 
 function toolbarOptionHandler(option) {
     if (option === "multipleShapes" || option === "zoom" || option === "lineWidth" || option === "colorPicker" || option === "eraser") {
         toggleListHandler(option);
     }
     else {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject[option].name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler(option);
+        // toolbarOptionsObject[toolbarOption].name.classList.remove('text-blue-400');
+        // toolbarOptionsObject[toolbarOption].name.classList.remove('bg-white');
+        // toolbarOptionsObject[option].name.classList.add('text-blue-400');
+        // toolbarOptionsObject[option].name.classList.add('bg-white');
+
+        // toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
+        // toolbarOptionsObject[option].name.classList.add('bg-gray-400');
         toolbarOption = option;
     }
 }
 
 
 function toggleListHandler(name) {
-    toolbarOptionsObject[toggleList]?.child?.classList?.add("slideUp");
-    toolbarOptionsObject[toggleList]?.child?.classList?.remove("slideDown");
+    toolbarOptionsObject[toggleList]?.child?.classList?.add("animate-slideUp");
+    toolbarOptionsObject[toggleList]?.child?.classList?.remove("animate-slideDown");
 
-    // console.log("list", toggleList);
-
-    // console.log("name", name);
     if (name === toggleList) {
         toggleList = null; return;
     }
     toggleList = name;
-    if (toolbarOptionsObject[toggleList].child.classList.contains("slideUp")) {
-        toolbarOptionsObject[toggleList].child.classList.remove("slideUp");
-        toolbarOptionsObject[toggleList].child.classList.add("slideDown");
+    if (toolbarOptionsObject[toggleList].child.classList.contains("animate-slideUp")) {
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideUp");
+        toolbarOptionsObject[toggleList].child.classList.add("animate-slideDown");
     }
     else {
-        toolbarOptionsObject[toggleList].child.classList.add("slideUp");
-        toolbarOptionsObject[toggleList].child.classList.remove("slideDown");
+        toolbarOptionsObject[toggleList].child.classList.add("animate-slideUp");
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideDown");
     }
 }
 
@@ -116,18 +135,15 @@ function shapeAndToolHandler(shapeName, event) {
     shape = shapeName;
     if (shape === "straightLine" || shape === "circle" || shape === "rectangle" ||
         shape === "solidCircle" || shape === "solidRectangle") {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject.multipleShapes.name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler("multipleShapes");
         toolbarOption = "multipleShapes";
     }
     else if (shape === "basicEraser" || shape === "objectEraser") {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject.eraser.name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler("eraser");
         toolbarOption = "eraser";
     }
     else if (shape === "zoomIn" || shape === "zoomOut") {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject.zoom.name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler("zoom");
         toolbarOption = "zoom";
     }
     else if (shape === "pen" || shape === "hand") {
@@ -136,9 +152,6 @@ function shapeAndToolHandler(shapeName, event) {
     else {
         toggleListHandler(shape);
     }
-    // else if (shape !== "pen" && shape !== "hand") {
-    //     toggleListHandler(shape);
-    // }
     console.log(shape);
     event.stopPropagation();
 }
@@ -170,13 +183,6 @@ function colorPickerHandler(event) {
         repaintHandler(1, 1);
     }
 }
-
-
-// function printCoordinates(x, y) {
-//     // document.querySelector("[change]").innerHTML = `${parseInt(x)}x${parseInt(y)}`;
-//     document.querySelector("[change]").innerHTML = `${x}x${y}`;
-// }
-
 
 // Function to start drawing.
 function startDrawing(event) {
@@ -553,7 +559,7 @@ function undoHandler() {
 }
 
 // Function to redo the last path.
-function redoHandler() {
+function redoHandler(event) {
     if (redoArray.length === 0) return;
 
     const redoItem = redoArray.pop();

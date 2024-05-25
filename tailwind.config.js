@@ -2,7 +2,62 @@
 module.exports = {
   content: ["*"],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        'xs': { 'min': '0px', 'max': '639px' },
+      },
+      boxShadow: {
+        'custom': '0px 0px 4px rgba(0, 0, 0, 0.5)',
+      },
+      keyframes: {
+        slideDown: {
+          '0%': {
+            transform: 'scale(0)',
+          },
+          '100%': {
+            transform: 'scale(1)',
+            top: '175%',
+          },
+        },
+        slideUp: {
+          '0%': {
+            transform: 'scale(1)',
+            top: '175%',
+          },
+          '100%': {
+            transform: 'scale(0)',
+          },
+        },
+        clockwiseSpin: {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '50%': {
+            transform: 'rotate(180deg)',
+          },
+          '100%': {
+            transform: 'rotate(0deg)',
+          },
+        },
+        anticlockwiseSpin: {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '50%': {
+            transform: 'rotate(-180deg)',
+          },
+          '100%': {
+            transform: 'rotate(0deg)',
+          },
+        },
+      },
+      animation: {
+        slideDown: 'slideDown 250ms ease-out forwards',
+        slideUp: 'slideUp 250ms ease-in forwards',
+        clockwiseSpin: 'clockwiseSpin 400ms linear forwards',
+        anticlockwiseSpin: 'anticlockwiseSpin 400ms linear forwards',
+      },
+    },
   },
   plugins: [],
 }
