@@ -1,6 +1,6 @@
 const dataPen = document.querySelector('[data-pen]');
 const dataEraser = document.querySelector('[data-eraser]');
-const dataEraserContainer = document.querySelector('[data-eraserContainer]');
+const dataEraserButton = document.querySelector('[data-eraserButton]');
 const dataMultipleShapes = document.querySelector('[data-multipleShapes]');
 const dataZoom = document.querySelector('[data-zoom]');
 const dataHand = document.querySelector('[data-hand]');
@@ -16,7 +16,7 @@ const dataZoomInOut = document.querySelector('[data-zoomInOut]');
 
 const toolbarOptionsObject = {
     pen: { name: dataPen },
-    eraser: { name: dataEraserContainer, child: dataEraser },
+    eraser: { name: dataEraserButton, child: dataEraser },
     hand: { name: dataHand },
     zoom: { name: dataZoom, child: dataZoomInOut },
     multipleShapes: { name: dataMultipleShapes, child: dataListOfShapes },
@@ -100,13 +100,6 @@ function toolbarOptionHandler(option) {
     }
     else {
         toolbarOptionColorHandler(option);
-        // toolbarOptionsObject[toolbarOption].name.classList.remove('text-blue-400');
-        // toolbarOptionsObject[toolbarOption].name.classList.remove('bg-white');
-        // toolbarOptionsObject[option].name.classList.add('text-blue-400');
-        // toolbarOptionsObject[option].name.classList.add('bg-white');
-
-        // toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        // toolbarOptionsObject[option].name.classList.add('bg-gray-400');
         toolbarOption = option;
     }
 }
@@ -578,7 +571,7 @@ function deletePageHandler() {
         nextAndAddPageButton?.children[0].classList.add("fa-plus");
         nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
     }
-    if (curPageNo === 1 && pages.length === 2) {
+    if (pages.length === 2) {
         prevPageButton.classList.add("hidden");
         deletePageButton.classList.add("hidden");
     }

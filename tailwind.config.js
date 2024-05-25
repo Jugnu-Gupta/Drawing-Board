@@ -52,8 +52,10 @@ module.exports = {
         },
       },
       animation: {
-        slideDown: 'slideDown 250ms ease-out forwards',
-        slideUp: 'slideUp 250ms ease-in forwards',
+        // slideDown: 'slideDown 250ms ease-out forwards',
+        // slideUp: 'slideUp 250ms ease-in forwards',
+        slideDown: 'slideDown 250ms linear forwards',
+        slideUp: 'slideUp 250ms linear forwards',
         clockwiseSpin: 'clockwiseSpin 400ms linear forwards',
         anticlockwiseSpin: 'anticlockwiseSpin 400ms linear forwards',
       },
