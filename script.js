@@ -1,11 +1,11 @@
 const dataPen = document.querySelector('[data-pen]');
 const dataEraser = document.querySelector('[data-eraser]');
-const dataEraserButton = document.querySelector('[data-eraserButton]');
+const dataEraserSibling = document.querySelector('[data-eraserSibling]');
 const dataMultipleShapes = document.querySelector('[data-multipleShapes]');
 const dataZoom = document.querySelector('[data-zoom]');
 const dataHand = document.querySelector('[data-hand]');
 const dataLineWidthContainer = document.querySelector('[data-strokeWidth]');
-const dataColorPickerConatiner = document.querySelector('[data-colorPickerConatiner]');
+const dataColorPickerSibling = document.querySelector('[data-colorPickerSibling]');
 
 const lineWidthSlider = document.querySelector('[data-lineWidthSlider]');
 const dataLineWidth = document.querySelector('[data-lineWidth]');
@@ -21,7 +21,7 @@ const toolbarOptionsObject = {
     zoom: { name: dataZoom, child: dataZoomInOut },
     multipleShapes: { name: dataMultipleShapes, child: dataListOfShapes },
     lineWidth: { name: dataLineWidthContainer, child: dataLineWidth },
-    colorPicker: { name: dataColorPickerConatiner, child: dataColorPicker },
+    colorPicker: { name: dataColorPickerSibling, child: dataColorPicker },
 };
 
 

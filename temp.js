@@ -1,6 +1,6 @@
 const dataPen = document.querySelector('[data-pen]');
 const dataEraser = document.querySelector('[data-eraser]');
-const dataEraserContainer = document.querySelector('[data-eraserContainer]');
+const dataEraserButton = document.querySelector('[data-eraserButton]');
 const dataMultipleShapes = document.querySelector('[data-multipleShapes]');
 const dataZoom = document.querySelector('[data-zoom]');
 const dataHand = document.querySelector('[data-hand]');
@@ -16,7 +16,7 @@ const dataZoomInOut = document.querySelector('[data-zoomInOut]');
 
 const toolbarOptionsObject = {
     pen: { name: dataPen },
-    eraser: { name: dataEraserContainer, child: dataEraser },
+    eraser: { name: dataEraserButton, child: dataEraser },
     hand: { name: dataHand },
     zoom: { name: dataZoom, child: dataZoomInOut },
     multipleShapes: { name: dataMultipleShapes, child: dataListOfShapes },
@@ -24,35 +24,40 @@ const toolbarOptionsObject = {
     colorPicker: { name: dataColorPickerConatiner, child: dataColorPicker },
 };
 
+
 // Get the canvas element
 const canvas = document.querySelector(".canvas");
 const context = canvas.getContext("2d");
 context.imageSmoothingEnabled = true;
 context.imageSmoothingQuality = 'high';
-
-// footer
-// const clearPageButton = document.querySelector("[data-clearPageButton]");
-const deletePageButton = document.querySelector("[data-deletePageButton]");
-const prevPageButton = document.querySelector("[data-prevPageButton]");
-const nextAndAddPageButton = document.querySelector("[data-nextAndAddPageButton]");
-
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const deletePageButton = document.querySelector("[data-deletePageButton]");
+const prevPageButton = document.querySelector("[data-prevPageButton]");
+const nextAndAddPageButton = document.querySelector("[data-nextAndAddPageButton]");
+const container = document.querySelector("[data-container]");
+const dataNote = document.querySelector('[data-note]');
+
 // Variables to track the drawing state
 let pages = [{
-    backgroundColor: '#9ca3af',
+    backgroundColor: '#ffffff',
     drawnArray: [],
     redoArray: [],
-    scaleFactor: 1.0,
 }];
 let curPageNo = 0;
 
+// note
 let notes = {};
 let noteNo = 0;
-console.log("script.js", notes);
+let zIndexPriority = 0;
+let curNoteNo = '';
+let curNoteOffsetX = 0;
+let curNoteOffsetY = 0;
 
+// zoom
+const zoomSpeed = 0.2;
+let scaleFactor = 1.0;
 
 // Variables to keep track of the current page.
 let isDrawing = false;
@@ -66,47 +71,55 @@ let curDrawing = [];
 let toolbarOption = "pen";
 let toggleList = null;
 
+
 let backgroundColor = pages[curPageNo].backgroundColor;
 let drawnArray = pages[curPageNo].drawnArray;
 let redoArray = pages[curPageNo].redoArray;
 let offsetX = 0;
 let offsetY = 0;
 
-// zoom
-const zoomSpeed = 0.2;
-let scaleFactor = pages[curPageNo].scaleFactor;
+function toolbarOptionColorHandler(option) {
+    // bg-gray-200 text-blue-400
 
+    // previous option.
+    toolbarOptionsObject[toolbarOption].name.classList.remove('bg-blue-400');
+    toolbarOptionsObject[toolbarOption].name.classList.remove('text-white');
+    toolbarOptionsObject[toolbarOption].name.classList.add('text-blue-400');
+    toolbarOptionsObject[toolbarOption].name.classList.add('bg-gray-200');
+
+    // selected option.
+    toolbarOptionsObject[option].name.classList.remove('text-blue-400');
+    toolbarOptionsObject[option].name.classList.remove('bg-gray-200');
+    toolbarOptionsObject[option].name.classList.add('bg-blue-400');
+    toolbarOptionsObject[option].name.classList.add('text-white');
+}
 
 function toolbarOptionHandler(option) {
     if (option === "multipleShapes" || option === "zoom" || option === "lineWidth" || option === "colorPicker" || option === "eraser") {
         toggleListHandler(option);
     }
     else {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject[option].name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler(option);
         toolbarOption = option;
     }
 }
 
 
 function toggleListHandler(name) {
-    toolbarOptionsObject[toggleList]?.child?.classList?.add("slideUp");
-    toolbarOptionsObject[toggleList]?.child?.classList?.remove("slideDown");
+    toolbarOptionsObject[toggleList]?.child?.classList?.add("animate-slideUp");
+    toolbarOptionsObject[toggleList]?.child?.classList?.remove("animate-slideDown");
 
-    // console.log("list", toggleList);
-
-    // console.log("name", name);
     if (name === toggleList) {
         toggleList = null; return;
     }
     toggleList = name;
-    if (toolbarOptionsObject[toggleList].child.classList.contains("slideUp")) {
-        toolbarOptionsObject[toggleList].child.classList.remove("slideUp");
-        toolbarOptionsObject[toggleList].child.classList.add("slideDown");
+    if (toolbarOptionsObject[toggleList].child.classList.contains("animate-slideUp")) {
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideUp");
+        toolbarOptionsObject[toggleList].child.classList.add("animate-slideDown");
     }
     else {
-        toolbarOptionsObject[toggleList].child.classList.add("slideUp");
-        toolbarOptionsObject[toggleList].child.classList.remove("slideDown");
+        toolbarOptionsObject[toggleList].child.classList.add("animate-slideUp");
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideDown");
     }
 }
 
@@ -115,18 +128,15 @@ function shapeAndToolHandler(shapeName, event) {
     shape = shapeName;
     if (shape === "straightLine" || shape === "circle" || shape === "rectangle" ||
         shape === "solidCircle" || shape === "solidRectangle") {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject.multipleShapes.name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler("multipleShapes");
         toolbarOption = "multipleShapes";
     }
     else if (shape === "basicEraser" || shape === "objectEraser") {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject.eraser.name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler("eraser");
         toolbarOption = "eraser";
     }
     else if (shape === "zoomIn" || shape === "zoomOut") {
-        toolbarOptionsObject[toolbarOption].name.classList.remove('bg-gray-400');
-        toolbarOptionsObject.zoom.name.classList.add('bg-gray-400');
+        toolbarOptionColorHandler("zoom");
         toolbarOption = "zoom";
     }
     else if (shape === "pen" || shape === "hand") {
@@ -135,9 +145,6 @@ function shapeAndToolHandler(shapeName, event) {
     else {
         toggleListHandler(shape);
     }
-    // else if (shape !== "pen" && shape !== "hand") {
-    //     toggleListHandler(shape);
-    // }
     console.log(shape);
     event.stopPropagation();
 }
@@ -170,13 +177,6 @@ function colorPickerHandler(event) {
     }
 }
 
-
-// function printCoordinates(x, y) {
-//     // document.querySelector("[change]").innerHTML = `${parseInt(x)}x${parseInt(y)}`;
-//     document.querySelector("[change]").innerHTML = `${x}x${y}`;
-// }
-
-
 // Function to start drawing.
 function startDrawing(event) {
     console.log("startDrawing");
@@ -194,6 +194,7 @@ function startDrawing(event) {
     [startX, startY] = adjustCoordinates(event.clientX, event.clientY);
 }
 
+
 // function to check if the point is below the line.
 function isPointBelowTheline(line, point) {
     // Eq of line: y-y1 = ((y2-y1)/(x2-x1))*(x-x1);
@@ -201,11 +202,13 @@ function isPointBelowTheline(line, point) {
         (line.X2 - line.X1) * (point.Y - line.Y2) >= 0;
 }
 
+
 // function to check if the point is inside the rectangle.
 function isPointInsideTheRectangle(rectangle, point) {
     return rectangle.X1 <= point.X && point.X <= rectangle.X2 &&
         rectangle.Y1 <= point.Y && point.Y <= rectangle.Y2;
 }
+
 
 // function to check if the point is inside the circle.
 function isPointInsideTheCircle(circle, point) {
@@ -223,6 +226,7 @@ function eraseObject(startX, startY, endX, endY) {
             let shapeInfo = drawnArray[i][j].shape;
             const point1 = { X: startX, Y: startY };
             const point2 = { X: endX, Y: endY };
+
 
             if (shapeInfo?.name === "pen" || shapeInfo?.name === "straightLine") {
                 const line1 = {
@@ -548,7 +552,7 @@ function undoHandler() {
 }
 
 // Function to redo the last path.
-function redoHandler() {
+function redoHandler(event) {
     if (redoArray.length === 0) return;
 
     const redoItem = redoArray.pop();
@@ -561,11 +565,13 @@ function redoHandler() {
     repaintHandler(1, 1);
 }
 
+// function to delete the current page.
 function deletePageHandler() {
     if (curPageNo === pages.length - 2) {
-        nextAndAddPageButton.innerHTML = "Add";
+        nextAndAddPageButton?.children[0].classList.add("fa-plus");
+        nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
     }
-    if (curPageNo === 1 && pages.length === 2) {
+    if (pages.length === 2) {
         prevPageButton.classList.add("hidden");
         deletePageButton.classList.add("hidden");
     }
@@ -582,11 +588,9 @@ function deletePageHandler() {
     drawnArray = pages[curPageNo].drawnArray;
     redoArray = pages[curPageNo].redoArray;
     backgroundColor = pages[curPageNo].backgroundColor;
-    scaleFactor = pages[curPageNo].scaleFactor;
 
     // update the canvas.
     canvas.style.backgroundColor = backgroundColor;
-    scaleCanvas(scaleFactor);
     repaintHandler(1, 1);
 }
 
@@ -595,16 +599,9 @@ function updateCurrentPageHandler() {
     pages[curPageNo].drawnArray = drawnArray;
     pages[curPageNo].redoArray = redoArray;
     pages[curPageNo].backgroundColor = backgroundColor;
-    pages[curPageNo].scaleFactor = scaleFactor;
 }
 
-// function updateVariablesOnPageChangeHandler() {
-//     drawnArray = pages[curPageNo].drawnArray;
-//     redoArray = pages[curPageNo].redoArray;
-//     backgroundColor = pages[curPageNo].backgroundColor;
-//     scaleFactor = pages[curPageNo].scaleFactor;
-// }
-
+// function to clear the current page.
 function clearPageHandler() {
     pages[curPageNo].drawnArray = [];
     pages[curPageNo].redoArray = [];
@@ -616,7 +613,8 @@ function clearPageHandler() {
 // function to move to the next page and add new page.
 function nextAndAddPageHandler() {
     if (curPageNo === pages.length - 2) {
-        nextAndAddPageButton.innerHTML = "Add";
+        nextAndAddPageButton?.children[0].classList.add("fa-plus");
+        nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
     }
     if (curPageNo === 0) {
         prevPageButton.classList.remove("hidden");
@@ -635,14 +633,12 @@ function nextAndAddPageHandler() {
             drawnArray: [],
             redoArray: [],
             backgroundColor: backgroundColor,
-            scaleFactor: 1,
         });
         curPageNo++;
 
         // update the global variables.
         drawnArray = [];
         redoArray = [];
-        scaleFactor = 1;
     }
     // move to the next page.
     else {
@@ -651,14 +647,12 @@ function nextAndAddPageHandler() {
         drawnArray = pages[curPageNo].drawnArray;
         redoArray = pages[curPageNo].redoArray;
         backgroundColor = pages[curPageNo].backgroundColor;
-        scaleFactor = pages[curPageNo].scaleFactor;
 
         // update the canvas.
         canvas.style.backgroundColor = backgroundColor;
     }
 
     // reset the canvas.
-    scaleCanvas(scaleFactor);
     repaintHandler(1, 1);
 }
 
@@ -669,7 +663,12 @@ function prevPageHandler() {
         prevPageButton.classList.add("hidden");
     }
     if (curPageNo === pages.length - 1) {
-        nextAndAddPageButton.innerHTML = "Next";
+        // nextAndAddPageButton
+        console.log(nextAndAddPageButton);
+        // console.log(nextAndAddPageButton?.children[0]);
+        nextAndAddPageButton?.children[0].classList.remove("fa-plus");
+        nextAndAddPageButton?.children[0]?.classList.add("fa-arrow-right");
+        // nextAndAddPageButton.innerHTML = "Next";
     }
 
     // console.log("prev", curPageNo, pages.length);
@@ -682,11 +681,9 @@ function prevPageHandler() {
     drawnArray = pages[curPageNo].drawnArray;
     redoArray = pages[curPageNo].redoArray;
     backgroundColor = pages[curPageNo].backgroundColor;
-    scaleFactor = pages[curPageNo].scaleFactor;
 
     // update the canvas.
     canvas.style.backgroundColor = backgroundColor;
-    scaleCanvas(scaleFactor);
     repaintHandler(1, 1);
 }
 
@@ -718,25 +715,6 @@ function calculateZoom(event) {
     return scaleFactor;
 }
 
-function makeCursorInCenter(event) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width; // horizontal scale factor
-    const scaleY = canvas.height / rect.height; // vertical scale factor
-
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    // const cursorX = centerX * scaleX;
-    // const cursorY = centerY * scaleY;
-    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
-    console.log(curX, curY);
-
-    const translateX = (startX - curX) * scaleFactor;
-    const translateY = (startY - curY) * scaleFactor;
-
-    window.scrollBy(translateX, translateY);
-}
-
 // function to scale the canvas.
 function scaleCanvas(scaleFactor, event) {
     if (scaleFactor > 1) {
@@ -747,7 +725,13 @@ function scaleCanvas(scaleFactor, event) {
         canvas.style.marginLeft = `${0}px`;
     }
     canvas.style.transform = `scale(${scaleFactor})`;
-    makeCursorInCenter(event);
+
+
+    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
+    const translateX = (startX - curX) * scaleFactor;
+    const translateY = (startY - curY) * scaleFactor;
+
+    window.scrollBy(translateX, translateY);
 }
 
 // function to handle the zoom in and zoom out.
@@ -761,8 +745,6 @@ function zoomHandler(event) {
 
 // Function to adjust the coordinates based on the canvas position and zoom factor.
 function adjustCoordinates(x, y) {
-    // getBoundingClientRect method providing information about the size of an element and its position 
-    // relative to the viewport. It includes properties such as top, right, bottom, left, width, and height.
     const rect = canvas.getBoundingClientRect();
 
     // Adjust coordinates based on canvas position and zoom factor
@@ -776,7 +758,6 @@ function adjustCoordinates(x, y) {
     return [x, y];
 }
 
-// document.addEventListener('click', (event) => { console.log(event.clientX + " " + event.clientY), console.log(scaleFactor) });
 
 // Add event listeners for drawing.
 canvas.addEventListener('mousedown', startDrawing);
@@ -790,14 +771,35 @@ canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('touchcancel', stopDrawing);
 window.addEventListener('resize', resizeHandler);
 canvas.addEventListener('click', zoomHandler);
-// canvas.parentElement.addEventListener('wheel', zoomHandler);
 
+
+function saveImage() {
+    const dataURL = canvas.toDataURL('image/png');
+
+    // create a link.
+    const link = document.createElement('a');
+    link.href = dataURL;
+
+    link.download = 'image.png';
+    link.click();
+}
 
 function deleteNoteHandler(event) {
-    const id = event.target.parentElement.id;
-    delete notes.id;
+    const id = event.target.parentElement.parentElement.id;
 
-    console.log("deleteNoteHandler", event.target.parentElement);
+    // delete the note.
+    delete notes[id];
+    document.getElementById(id).remove();
+
+    // console.log("deleteNoteHandler", event.target.parentElement.parentElement);
+}
+
+
+function minimiseNoteHandler(event) {
+    const textArea = event.target.parentElement.parentElement.children[1];
+    textArea.classList.toggle('hidden');
+
+    // console.log("minimiseNoteHandler", event.target.parentElement.parentElement.children[1]);
 }
 
 function addNoteHandler() {
@@ -807,45 +809,71 @@ function addNoteHandler() {
 
     const newNote = dataNote.cloneNode(true);
     newNote.id = id;
-    notes[id] = newNote;
+    newNote.classList.remove('hidden');
 
-    document.body.appendChild(notes[id]);
+    notes[id] = newNote;
+    // console.log(newNote.children);
+
+    container.appendChild(notes[id]);
+
+    // console.log(container);
     noteNo++;
 }
 
-let left = 0, up = 0;
-const dataNote = document.querySelector('[data-note]');
+function startNoteDrag(event) {
+    let target;
+    // console.log(event.target);
 
-dataNote.addEventListener('mousedown', (event) => {
-    notes.push(dataNote);
-    const rect = dataNote.getBoundingClientRect();
-    left = event.clientX - rect.left;
-    up = event.clientY - rect.top;
-    console.log(left, up);
-
-    curNote = 0;
-});
-
-dataNote.addEventListener('mousemove', (event) => {
-    console.log("note", curNote);
-    if (curNote === -1) return;
-
-    // console.log(note[curNote].classList);
-
-    const x = event.clientX - left;
-    const y = event.clientY - up;
-    // console.log(x, y);
-
-    note[curNote].style.left = `${x}px`;
-    note[curNote].style.top = `${y}px`;
-});
+    // find the target element.
+    if (event.target.id === 'container' || event.target.nodeName === 'CANVAS') {
+        return;
+    }
+    else if (event.target.nodeName === 'TEXTAREA' || (event.target.nodeName === 'DIV' && event.target.parentElement.id !== 'container')) {
+        target = event.target.parentElement;
+    }
+    else if (event.target.nodeName === 'INPUT') {
+        target = event.target.parentElement.parentElement;
+    }
+    else {
+        target = event.target;
+    }
 
 
-dataNote.addEventListener('mouseup', () => {
-    curNote = -1;
-});
+    // update the z-index.
+    target.style.zIndex = `${zIndexPriority++}`;
 
 
-// var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
-// window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
-// document.body.addEventListener('wheel', (event) => event.preventDefault())
+    // console.log("target", target.classList);
+    const rect = target.getBoundingClientRect();
+    curNoteOffsetX = event.clientX - rect.left;
+    curNoteOffsetY = event.clientY - rect.top;
+
+    // console.log(curNoteOffsetX, curNoteOffsetY);
+
+    // get note id
+    curNoteNo = target.id;
+}
+
+
+function noteDragHandler(event) {
+    if (curNoteNo === '') return;
+
+    const id = curNoteNo;
+    const x = event.clientX - curNoteOffsetX;
+    const y = event.clientY - curNoteOffsetY;
+
+    notes[id].style.left = `${x}px`;
+    notes[id].style.top = `${y}px`;
+}
+
+function stopNoteDrag() {
+    curNoteNo = '';
+}
+
+container.addEventListener('mousedown', startNoteDrag);
+container.addEventListener('mousemove', noteDragHandler);
+container.addEventListener('mouseup', stopNoteDrag);
+
+container.addEventListener('touchstart', startNoteDrag);
+container.addEventListener('touchmove', noteDragHandler);
+container.addEventListener('touchend', stopNoteDrag);

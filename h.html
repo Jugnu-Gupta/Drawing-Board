@@ -39,7 +39,7 @@
             <!-- Eraser button -->
             <button onclick="toolbarOptionHandler(`eraser`)" class="relative">
                 <i class="fa-solid fa-eraser p-2 rounded-full text-blue-400 bg-gray-200 hover:scale-110 transition-all"
-                    data-eraserSibling></i>
+                    data-eraserButton></i>
 
                 <div class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 animate-slideUp 
                 flex flex-col rounded-xl shadow-custom" data-eraser>
@@ -52,12 +52,26 @@
                 </div>
             </button>
 
+            <!-- <button onclick="toolbarOptionHandler(`eraser`)" class="bg-gray-200 text-blue-400 relative 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-eraserContainer>
+                <i class="fa-solid fa-eraser"></i>
+
+                <div class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 animate-slideUp 
+                flex flex-col rounded-xl shadow-custom" data-eraser>
+                    <i onclick="shapeAndToolHandler(`basicEraser`,event)"
+                        class="fa-solid fa-eraser w-4 p-2 px-2 pt-3"></i>
+                    <div onclick="shapeAndToolHandler(`objectEraser`,event)" class="p-2 px-2 pb-3">
+                        <i class="fa-solid fa-eraser text-sm border-2 border-dashed border-blue-400 
+                            rounded-full p-[2px]"></i>
+                    </div>
+                </div>
+            </button> -->
 
 
             <!-- multiple shapes button -->
-            <button onclick="toolbarOptionHandler(`multipleShapes`)" class="relative">
-                <i class="fa-solid fa-shapes p-2 rounded-full text-blue-400 bg-gray-200 hover:scale-110 transition-all"
-                    data-multipleShapes></i>
+            <button onclick="toolbarOptionHandler(`multipleShapes`)" class="bg-gray-200 text-blue-400 relative 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-multipleShapes>
+                <i class="relative z-10 fa-solid fa-shapes"></i>
 
                 <div class="absolute -top-[200%] -left-[2px] bg-white text-blue-400 animate-slideUp 
                 flex flex-col rounded-xl shadow-custom" data-ListOfShapes>
@@ -74,9 +88,9 @@
 
 
             <!-- Zoom button-->
-            <button onclick="toolbarOptionHandler(`zoom`)" class="relative">
-                <i class="fa-solid fa-magnifying-glass p-2 rounded-full text-blue-400 bg-gray-200 hover:scale-110 transition-all"
-                    data-zoom></i>
+            <button onclick="toolbarOptionHandler(`zoom`)" class="bg-gray-200 text-blue-400 relative 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-zoom>
+                <i class="fa-solid fa-magnifying-glass"></i>
 
                 <div class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 animate-slideUp 
                 flex flex-col rounded-xl shadow-custom" data-zoomInOut>
@@ -97,9 +111,9 @@
 
 
             <!-- pen-width slider -->
-            <button onclick="toolbarOptionHandler(`lineWidth`)" class="relative">
-                <i class="fa-solid fa-pen-ruler p-2 rounded-full text-blue-400 bg-gray-200 hover:scale-110 transition-all"
-                    data-strokeWidth></i>
+            <button onclick="toolbarOptionHandler(`lineWidth`)" class="bg-gray-200 text-blue-400 relative 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-strokeWidth>
+                <i class="fa-solid fa-pen-ruler"></i>
 
                 <div class="absolute top-0 -left-[150%] bg-white text-blue-400 rounded-xl animate-slideUp 
                     px-3 w-32 shadow-custom" data-lineWidth>
@@ -110,9 +124,9 @@
 
 
             <!-- color picker button -->
-            <button onclick="toolbarOptionHandler(`colorPicker`)" class="relative">
-                <i class="fa-solid fa-palette p-2 rounded-full text-blue-400 bg-gray-200 hover:scale-110 transition-all"
-                    data-colorPickerSibling></i>
+            <button onclick="toolbarOptionHandler(`colorPicker`)" class="bg-gray-200 text-blue-400 relative 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-colorPickerConatiner>
+                <i class="fa-solid fa-palette"></i>
 
                 <div onclick="colorPickerHandler(event)" class="absolute -top-2/3 -left-2/3 bg-white px-3 
                     text-blue-400 rounded-xl animate-slideUp flex flex-col shadow-custom" data-colorPicker>
