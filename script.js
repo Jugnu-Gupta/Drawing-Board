@@ -16,7 +16,7 @@ const dataZoomInOut = document.querySelector('[data-zoomInOut]');
 
 const toolbarOptionsObject = {
     pen: { name: dataPen },
-    eraser: { name: dataEraserButton, child: dataEraser },
+    eraser: { name: dataEraserSibling, child: dataEraser },
     hand: { name: dataHand },
     zoom: { name: dataZoom, child: dataZoomInOut },
     multipleShapes: { name: dataMultipleShapes, child: dataListOfShapes },
