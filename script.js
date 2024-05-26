@@ -463,9 +463,7 @@ function draw(event) {
             top: translateY,
             behavior: 'auto'
         });
-        console.error = function () { };
         scrollHandler();
-        // getCoordinates();
 
         // Update the last position.
         startX = curX;
