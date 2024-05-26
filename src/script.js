@@ -780,6 +780,8 @@ function deleteNoteHandler(event) {
     const id = event.target.parentElement.parentElement.id;
 
     // delete the note.
+    notes[id].children[0].children[1].removeEventListener('click', minimiseNoteHandler);
+    notes[id].children[0].children[2].removeEventListener('click', deleteNoteHandler);
     delete notes[id];
     document.getElementById(id).remove();
 }
@@ -793,7 +795,10 @@ function minimiseNoteHandler(event) {
 // function to add a new note.
 function addNoteHandler() {
     const id = `data-note${noteNo}`;
+
     const newNote = dataNote.cloneNode(true);
+    newNote.children[0].children[1].addEventListener('click', minimiseNoteHandler);
+    newNote.children[0].children[2].addEventListener('click', deleteNoteHandler);
     newNote.id = id;
     newNote.classList.remove('hidden');
 
@@ -861,7 +866,55 @@ function saveImage() {
     link.click();
 }
 
+
 // Add event listeners for drawing.
+dataPen.addEventListener('click', (event) => shapeAndToolHandler("pen", event));
+
+// Eraser
+dataEraserSibling.addEventListener('click', (event) => toolbarOptionHandler("eraser"));
+document.querySelector('[data-basicEraser]').addEventListener('click', (event) => shapeAndToolHandler("basicEraser", event));
+document.querySelector('[data-objectEraser]').addEventListener('click', (event) => shapeAndToolHandler("objectEraser", event));
+
+// List of shapes
+dataMultipleShapes.addEventListener('click', (event) => toolbarOptionHandler("multipleShapes"));
+document.querySelector('[data-straightLine]').addEventListener('click', (event) => shapeAndToolHandler("straightLine", event));
+document.querySelector('[data-circle]').addEventListener('click', (event) => shapeAndToolHandler("circle", event));
+document.querySelector('[data-rectangle]').addEventListener('click', (event) => shapeAndToolHandler("rectangle", event));
+document.querySelector('[data-solidRectangle]').addEventListener('click', (event) => shapeAndToolHandler("solidRectangle", event));
+
+// Zoom
+dataZoom.addEventListener('click', (event) => toolbarOptionHandler("zoom"));
+document.querySelector('[data-zoomIn]').addEventListener('click', (event) => shapeAndToolHandler("zoomIn", event));
+document.querySelector('[data-zoomOut]').addEventListener('click', (event) => shapeAndToolHandler("zoomOut", event));
+
+// hand
+dataHand.addEventListener('click', (event) => shapeAndToolHandler("hand", event));
+
+// Line Width
+dataLineWidthContainer.addEventListener('click', (event) => toolbarOptionHandler("lineWidth"));
+lineWidthSlider.addEventListener('input', lineWidthAdjustmentHandler);
+
+// color Picker
+dataColorPickerSibling.addEventListener('click', (event) => toolbarOptionHandler("colorPicker"));
+document.querySelector('[data-strokeColor]').addEventListener('input', colorPickerHandler);
+document.querySelector('[data-backgroundColor]').addEventListener('input', colorPickerHandler);
+
+// Save Image
+document.querySelector('[data-saveImage]').addEventListener('click', saveImage);
+
+// undo/redo
+document.querySelector('[data-undo]').addEventListener('click', undoHandler);
+document.querySelector('[data-redo]').addEventListener('click', redoHandler);
+
+// Page
+deletePageButton.addEventListener('click', deletePageHandler);
+document.querySelector('[data-clearPageButton]').addEventListener('click', clearPageHandler);
+prevPageButton.addEventListener('click', prevPageHandler);
+nextAndAddPageButton.addEventListener('click', nextAndAddPageHandler);
+window.addEventListener('resize', resizeHandler);
+canvas.addEventListener('click', zoomHandler);
+
+// drawing
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
@@ -870,12 +923,12 @@ canvas.addEventListener('touchstart', startDrawing);
 canvas.addEventListener('touchmove', draw);
 canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('touchcancel', stopDrawing);
+
+// Note drag
+document.querySelector('[data-addNote]').addEventListener('click', addNoteHandler);
 container.addEventListener('mousedown', startNoteDrag);
 container.addEventListener('mousemove', noteDragHandler);
 container.addEventListener('mouseup', stopNoteDrag);
 container.addEventListener('touchstart', startNoteDrag);
 container.addEventListener('touchmove', noteDragHandler);
 container.addEventListener('touchend', stopNoteDrag);
-
-window.addEventListener('resize', resizeHandler);
-canvas.addEventListener('click', zoomHandler);

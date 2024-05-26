@@ -8,9 +8,8 @@
     <link rel="shortcut icon" href="./src/assets/logo.png" type="image/x-icon">
 
     <!-- scripts -->
-    <script src="https://kit.fontawesome.com/848e0df24d.js" crossorigin="anonymous"></script>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <script src="./src/script.js" type="module"></script>
+    <script src="https://kit.fontawesome.com/848e0df24d.js" crossorigin="anonymous" defer></script>
+    <script src="./src/script.js" type="module" defer></script>
     <title>Sketch Verse</title>
     <style>
         * {
@@ -41,14 +40,14 @@
             xs:left-4 xs:translate-x-0 xs:flex-col xs:top-1/2 xs:-translate-y-1/2" data-aside>
 
             <!-- pen button -->
-            <button onclick="shapeAndToolHandler('pen', event)" class="bg-blue-400 text-white 
-                rounded-full px-2 py-1 hover:scale-110 transition-all" data-pen>
-                <i class="fa-solid fa-pen"></i>
+            <button class="bg-blue-400 text-white 
+            rounded-full px-2 py-1 hover:scale-110 transition-all" data-pen>
+                <i class="fa-solid fa-pen "></i>
             </button>
 
 
             <!-- Eraser button -->
-            <button onclick="toolbarOptionHandler('eraser')" class="relative">
+            <button class="relative">
                 <i class="fa-solid fa-eraser p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-eraserSibling></i>
 
@@ -56,10 +55,8 @@
                     flex-col rounded-xl shadow-custom xs:flex-row xs:-left-1/2 xs:-top-[2px] xs:items-center"
                     data-eraser>
 
-                    <i onclick="shapeAndToolHandler('basicEraser',event)"
-                        class="fa-solid fa-eraser p-2 px-2 pt-3 xs:py-2 xs:pl-3 xs:pt-2"></i>
-                    <div onclick="shapeAndToolHandler('objectEraser',event)"
-                        class="p-2 px-2 pb-3 xs:py-2 xs:pr-3 xs:pb-2">
+                    <i class="fa-solid fa-eraser p-2 px-2 pt-3 xs:py-2 xs:pl-3 xs:pt-2" data-basicEraser></i>
+                    <div class="p-2 px-2 pb-3 xs:py-2 xs:pr-3 xs:pb-2" data-objectEraser>
                         <i class="fa-solid fa-eraser text-sm border-2 border-dashed border-blue-400 
                             rounded-full p-[2px]"></i>
                     </div>
@@ -69,26 +66,24 @@
 
 
             <!-- multiple shapes button -->
-            <button onclick="toolbarOptionHandler('multipleShapes')" class="relative">
+            <button class="relative">
                 <i class="fa-solid fa-shapes p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-multipleShapes></i>
 
                 <div class="absolute -top-[200%] -left-[2px] bg-white text-blue-400 scale-0 shadow-custom flex  
                 rounded-xl flex-col xs:flex-row xs:-left-[200%] xs:-top-[2px] xs:items-center" data-ListOfShapes>
 
-                    <i onclick="shapeAndToolHandler('straightLine',event)"
-                        class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
-                    <i onclick="shapeAndToolHandler('circle',event)" class="fa-regular fa-circle p-2 px-1"></i>
-                    <i onclick="shapeAndToolHandler('solidCircle',event)" class="fa-solid fa-circle p-2 px-1"></i>
-                    <i onclick="shapeAndToolHandler('rectangle',event)" class="fa-regular fa-square p-2 px-3"></i>
-                    <i onclick="shapeAndToolHandler('solidRectangle',event)"
-                        class="fa-solid fa-square p-2 px-3 pb-3"></i>
+                    <i class="fa-solid fa-lines-leaning p-2 px-3 pt-3" data-straightLine></i>
+                    <i class="fa-regular fa-circle p-2 px-1" data-circle></i>
+                    <i class="fa-solid fa-circle p-2 px-1" data-solidCirlce></i>
+                    <i class="fa-regular fa-square p-2 px-3" data-rectangle></i>
+                    <i class="fa-solid fa-square p-2 px-3 pb-3" data-solidRectangle></i>
                 </div>
             </button>
 
 
             <!-- Zoom button-->
-            <button onclick="toolbarOptionHandler('zoom')" class="relative">
+            <button class="relative">
                 <i class="fa-solid fa-magnifying-glass p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-zoom></i>
 
@@ -96,48 +91,46 @@
                     flex-col rounded-xl shadow-custom xs:flex-row xs:-left-1/2 xs:-top-[2px] xs:items-center"
                     data-zoomInOut>
 
-                    <i onclick="shapeAndToolHandler('zoomIn',event)"
-                        class="fa-solid fa-magnifying-glass-plus p-2 px-3 pt-3"></i>
-                    <i onclick="shapeAndToolHandler('zoomOut',event)"
-                        class="fa-solid fa-magnifying-glass-minus p-2 px-1"></i>
+                    <i class="fa-solid fa-magnifying-glass-plus p-2 px-3 pt-3" data-zoomIn></i>
+                    <i class="fa-solid fa-magnifying-glass-minus p-2 px-1" data-zoomOut></i>
                 </div>
             </button>
 
 
             <!-- hand button-->
-            <button onclick="shapeAndToolHandler('hand',event)" class="bg-gray-200 text-blue-400 
+            <button class="bg-gray-200 text-blue-400 
                 rounded-full px-2 py-1 hover:scale-110 transition-all" data-hand>
                 <i class="fa-solid fa-hand"></i>
             </button>
 
 
             <!-- pen-width slider -->
-            <button onclick="toolbarOptionHandler('lineWidth')" class="relative">
+            <button class="relative">
                 <i class="fa-solid fa-pen-ruler p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-strokeWidth></i>
 
                 <div class="absolute top-0 -left-[150%] bg-white text-blue-400 rounded-xl scale-0 flex
                     px-3 w-32 shadow-custom xs:-top-2" data-lineWidth>
-                    <input onclick="lineWidthAdjustmentHandler(event)" type="range" name="slider" min="1" max="10"
-                        step="1" value="2" class="py-3 w-full" data-lineWidthSlider>
+                    <input type="range" name="slider" min="1" max="10" step="1" value="2" class="py-3 w-full"
+                        data-lineWidthSlider>
                 </div>
             </button>
 
 
             <!-- color picker button -->
-            <button onclick="toolbarOptionHandler('colorPicker')" class="relative">
+            <button class="relative">
                 <i class="fa-solid fa-palette p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-colorPickerSibling></i>
 
-                <div onclick="colorPickerHandler(event)" class="absolute -top-2/3 -left-2/3 bg-white px-3 
+                <div class="absolute -top-2/3 -left-2/3 bg-white px-3 
                     text-blue-400 rounded-xl scale-0 flex flex-col shadow-custom xs:-top-[90%]" data-colorPicker>
                     <!-- brush color -->
                     <div class="flex justify-between items-center gap-2 py-2">
                         <label for="strokeColor" class="text-sm"><i class="fa-solid fa-paintbrush"></i></label>
                         <div class="rounded-full overflow-hidden w-8 h-8 relative border-4">
-                            <input oninput="colorPickerHandler(event)" class="h-10 w-10 absolute 
+                            <input class="h-10 w-10 absolute 
                                 -top-[25%] -left-[25%]   cursor-pointer " type="color" name="strokeColor"
-                                id="strokeColor" value="#000000">
+                                id="strokeColor" value="#000000" data-strokeColor>
                         </div>
                     </div>
                     <!-- background color -->
@@ -146,9 +139,9 @@
                             <i class="fa-solid fa-paint-roller"></i>
                         </label>
                         <div class="rounded-full overflow-hidden w-8 h-8 relative border-4">
-                            <input oninput="colorPickerHandler(event)" class="h-10 w-10 absolute 
+                            <input class="h-10 w-10 absolute 
                                 -top-[25%] -left-[25%] cursor-pointer" type="color" value="#ffffff"
-                                name="backgroundColor" id="backgroundColor">
+                                name="backgroundColor" id="backgroundColor" data-backgroundColor>
                         </div>
                     </div>
                 </div>
@@ -156,9 +149,10 @@
 
 
             <!-- note button -->
-            <button onclick="addNoteHandler()" class="bg-gray-200 text-blue-400 
-                rounded-full px-2 py-1 hover:scale-110 transition-all">
-                <i class="fa-solid fa-notes-medical"></i></button>
+            <button class="bg-gray-200 text-blue-400 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-addNote>
+                <i class="fa-solid fa-notes-medical "></i>
+            </button>
         </aside>
 
 
@@ -174,10 +168,10 @@
                 <input type="text" value="" placeholder="Note..." class="outline-none 
                     font-bold bg-gray-200 w-2/3 m-1">
 
-                <i onclick="minimiseNoteHandler(event)" class="fa-solid fa-minus text-[9px] 
+                <i class="fa-solid fa-minus text-[9px] cursor-pointer
                     bg-green-500 text-white rounded-full p-[3px] py-[3px] ml-3"></i>
 
-                <i onclick="deleteNoteHandler(event)" class="fa-solid fa-x text-[9px] 
+                <i class="fa-solid fa-x text-[9px] cursor-pointer
                     bg-red-500 text-white rounded-full p-1 py-[3px] mr-1"></i>
             </div>
             <textarea name="textbox" id="textbox" rows="5" cols="30" class="outline-none 
@@ -187,9 +181,9 @@
 
         <!-- save button -->
         <div class="fixed z-[1000000] top-4 right-4 p-2 flex items-center gap-4 
-            bg-white text-blue-400 rounded-xl shadow-custom" data-footer>
-            <button onclick="saveImage()" class="text-blue-400 bg-gray-200 
-                rounded-full px-2 py-1 hover:scale-110 transition-all" data-saveButton>
+            bg-white text-blue-400 rounded-xl shadow-custom">
+            <button class="text-blue-400 bg-gray-200 
+                rounded-full px-2 py-1 hover:scale-110 transition-all" data-saveImage>
                 <i class="fa-solid fa-file-export"></i>
             </button>
         </div>
@@ -204,15 +198,15 @@
 
         <!-- undo/redo button -->
         <div class="fixed z-[1000000] bottom-4 left-4 px-4 py-2 flex items-center gap-4 
-            bg-white text-blue-400 rounded-xl shadow-custom" data-footer>
+            bg-white text-blue-400 rounded-xl shadow-custom">
             <!-- undo button -->
-            <button onclick="undoHandler()" class="transition-all rounded-full bg-gray-200 
-                px-2 py-1 hover:scale-110 active:animate-anticlockwiseSpin">
+            <button class="transition-all rounded-full bg-gray-200 
+                px-2 py-1 hover:scale-110 active:animate-anticlockwiseSpin" data-undo>
                 <i class="fa-solid fa-arrow-rotate-left"></i></button>
 
             <!-- redo button -->
-            <button onclick="redoHandler()" class="transition-all rounded-full bg-gray-200 
-                px-2 py-1 hover:scale-110 active:animate-clockwiseSpin">
+            <button class="transition-all rounded-full bg-gray-200 
+                px-2 py-1 hover:scale-110 active:animate-clockwiseSpin" data-redo>
                 <i class="fa-solid fa-arrow-rotate-right"></i></button>
         </div>
 
@@ -221,17 +215,17 @@
         <div class="fixed z-[1000000] bottom-4 right-4 px-4 py-2 flex items-center gap-4 
             bg-white text-blue-400 rounded-xl shadow-custom">
             <!-- delete button -->
-            <button onclick="deletePageHandler()" class="hidden hover:scale-110 transition-all 
+            <button class="hidden hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-deletePageButton>
                 <i class="fa-solid fa-trash"></i></button>
 
             <!-- clear button -->
-            <button onclick="clearPageHandler()" class="hover:scale-110 transition-all 
+            <button class="hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-clearPageButton>
                 <i class="fa-solid fa-broom text-[17px]"></i></button>
 
             <!-- prev button -->
-            <button onclick="prevPageHandler()" class="hidden hover:scale-110 transition-all 
+            <button class="hidden hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-prevPageButton>
                 <i class="fa-solid fa-arrow-left text-[17px]"></i></button>
 
@@ -240,7 +234,7 @@
                     bg-gray-200 px-2  p-1" data-pageNo>1/1</button>
 
             <!-- add/next button -->
-            <button onclick="nextAndAddPageHandler()" class="hover:scale-110 transition-all 
+            <button class="hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-nextAndAddPageButton>
                 <i class="fa-solid fa-plus text-[17px]"></i></button>
         </div>
