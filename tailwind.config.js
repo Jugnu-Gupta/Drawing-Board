@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        'xs': { 'min': '0px', 'max': '639px' },
+        'xs': { 'min': '0px', 'max': '767px' },
       },
       boxShadow: {
         'custom': '0px 0px 4px rgba(0, 0, 0, 0.5)',
@@ -23,6 +23,24 @@ module.exports = {
           '0%': {
             transform: 'scale(1)',
             top: '175%',
+          },
+          '100%': {
+            transform: 'scale(0)',
+          },
+        },
+        slideRight: {
+          '0%': {
+            transform: 'scale(0)',
+          },
+          '100%': {
+            transform: 'scale(1)',
+            left: '175%',
+          },
+        },
+        slideLeft: {
+          '0%': {
+            transform: 'scale(1)',
+            left: '175%',
           },
           '100%': {
             transform: 'scale(0)',
@@ -52,10 +70,10 @@ module.exports = {
         },
       },
       animation: {
-        // slideDown: 'slideDown 250ms ease-out forwards',
-        // slideUp: 'slideUp 250ms ease-in forwards',
         slideDown: 'slideDown 250ms linear forwards',
         slideUp: 'slideUp 250ms linear forwards',
+        slideRight: 'slideRight 250ms linear forwards',
+        slideLeft: 'slideLeft 250ms linear forwards',
         clockwiseSpin: 'clockwiseSpin 400ms linear forwards',
         anticlockwiseSpin: 'anticlockwiseSpin 400ms linear forwards',
       },

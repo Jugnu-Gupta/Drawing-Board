@@ -38,6 +38,8 @@ const prevPageButton = document.querySelector("[data-prevPageButton]");
 const nextAndAddPageButton = document.querySelector("[data-nextAndAddPageButton]");
 const container = document.querySelector("[data-container]");
 const dataNote = document.querySelector('[data-note]');
+const dataTool = document.querySelector('[data-tool]');
+const dataPageNo = document.querySelector('[data-pageNo]');
 
 // Variables to track the drawing state
 let pages = [{
@@ -63,6 +65,7 @@ let scaleFactor = 1.0;
 let isDrawing = false;
 let isDragging = false;
 let lineWidth = 2;
+let eraserWidth = 5;
 let startX = 0;
 let startY = 0;
 let strokeColor = '#000000';
@@ -75,25 +78,23 @@ let toggleList = null;
 let backgroundColor = pages[curPageNo].backgroundColor;
 let drawnArray = pages[curPageNo].drawnArray;
 let redoArray = pages[curPageNo].redoArray;
-let offsetX = 0;
-let offsetY = 0;
 
+// function to change the toolbar option color.
 function toolbarOptionColorHandler(option) {
-    // bg-gray-200 text-blue-400
-
     // previous option.
     toolbarOptionsObject[toolbarOption].name.classList.remove('bg-blue-400');
     toolbarOptionsObject[toolbarOption].name.classList.remove('text-white');
     toolbarOptionsObject[toolbarOption].name.classList.add('text-blue-400');
     toolbarOptionsObject[toolbarOption].name.classList.add('bg-gray-200');
 
-    // selected option.
+    // current option.
     toolbarOptionsObject[option].name.classList.remove('text-blue-400');
     toolbarOptionsObject[option].name.classList.remove('bg-gray-200');
     toolbarOptionsObject[option].name.classList.add('bg-blue-400');
     toolbarOptionsObject[option].name.classList.add('text-white');
 }
 
+// function to handle the toolbar option.
 function toolbarOptionHandler(option) {
     if (option === "multipleShapes" || option === "zoom" || option === "lineWidth" || option === "colorPicker" || option === "eraser") {
         toggleListHandler(option);
@@ -104,22 +105,26 @@ function toolbarOptionHandler(option) {
     }
 }
 
-
+// function to toggle the list.
 function toggleListHandler(name) {
-    toolbarOptionsObject[toggleList]?.child?.classList?.add("animate-slideUp");
+    toolbarOptionsObject[toggleList]?.child?.classList?.add(((window.innerWidth >= 768) ? "animate-slideUp" : "animate-slideLeft"));
     toolbarOptionsObject[toggleList]?.child?.classList?.remove("animate-slideDown");
+    toolbarOptionsObject[toggleList]?.child?.classList?.remove("animate-slideRight");
 
     if (name === toggleList) {
         toggleList = null; return;
     }
     toggleList = name;
-    if (toolbarOptionsObject[toggleList].child.classList.contains("animate-slideUp")) {
-        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideUp");
-        toolbarOptionsObject[toggleList].child.classList.add("animate-slideDown");
+    if (toolbarOptionsObject[toggleList].child.classList.contains("animate-slideDown") ||
+        toolbarOptionsObject[toggleList].child.classList.contains("animate-slideRight")) {
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideDown");
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideRight");
+        toolbarOptionsObject[toggleList].child.classList.add(((window.innerWidth >= 768) ? "animate-slideUp" : "animate-slideLeft"));
     }
     else {
-        toolbarOptionsObject[toggleList].child.classList.add("animate-slideUp");
-        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideDown");
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideUp");
+        toolbarOptionsObject[toggleList].child.classList.remove("animate-slideLeft");
+        toolbarOptionsObject[toggleList].child.classList.add(((window.innerWidth >= 768) ? "animate-slideDown" : "animate-slideRight"));
     }
 }
 
@@ -129,29 +134,47 @@ function shapeAndToolHandler(shapeName, event) {
     if (shape === "straightLine" || shape === "circle" || shape === "rectangle" ||
         shape === "solidCircle" || shape === "solidRectangle") {
         toolbarOptionColorHandler("multipleShapes");
+        if (shape === "straightLine") dataTool.innerHTML = "Straight Line";
+        else if (shape === "circle") dataTool.innerHTML = "Circle-stroke";
+        else if (shape === "solidCircle") dataTool.innerHTML = "Circle-fill";
+        else if (shape === "rectangle") dataTool.innerHTML = "Rectangle-stroke";
+        else if (shape === "solidRectangle") dataTool.innerHTML = "Rectangle-fill";
         toolbarOption = "multipleShapes";
     }
     else if (shape === "basicEraser" || shape === "objectEraser") {
         toolbarOptionColorHandler("eraser");
+        dataTool.innerHTML = shape === "basicEraser" ? "Standard Eraser" : "Stroke Eraser";
+        lineWidthSlider.value = eraserWidth;
         toolbarOption = "eraser";
     }
     else if (shape === "zoomIn" || shape === "zoomOut") {
         toolbarOptionColorHandler("zoom");
+        dataTool.innerHTML = shape === "zoomIn" ? "Zoom In" : "Zoom Out";
         toolbarOption = "zoom";
     }
     else if (shape === "pen" || shape === "hand") {
+        if (shape === "pen") {
+            lineWidthSlider.value = lineWidth;
+            dataTool.innerHTML = "Pen";
+        } else {
+            dataTool.innerHTML = "Hand";
+        }
         toolbarOptionHandler(shape);
     }
     else {
         toggleListHandler(shape);
     }
-    console.log(shape);
     event.stopPropagation();
 }
 
 // function to adjust the line/pen width.
 function lineWidthAdjustmentHandler(event) {
-    lineWidth = lineWidthSlider.value;
+    if (shape === "basicEraser" || shape === "objectEraser") {
+        eraserWidth = lineWidthSlider.value;
+    }
+    else {
+        lineWidth = lineWidthSlider.value;
+    }
 
     // slider background color.
     const min = event.target.min;
@@ -177,10 +200,14 @@ function colorPickerHandler(event) {
     }
 }
 
+function getCoordinates(event) {
+    const X = event.clientX || (event.touches && event.touches[0].clientX);
+    const Y = event.clientY || (event.touches && event.touches[0].clientY);
+    return [X, Y];
+}
+
 // Function to start drawing.
 function startDrawing(event) {
-    console.log("startDrawing");
-
     if (shape === "hand") {
         isDragging = true;
         isDrawing = false;
@@ -277,10 +304,10 @@ function eraseObject(startX, startY, endX, endY) {
 }
 
 // function to erase basic.
-function eraseBasic(startX, startY, endX, endY, lineWidth) {
+function eraseBasic(startX, startY, endX, endY, eraserWidth) {
     context.beginPath();
     context.strokeStyle = backgroundColor;
-    context.lineWidth = lineWidth;
+    context.lineWidth = eraserWidth;
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.moveTo(startX, startY);
@@ -335,8 +362,7 @@ function drawCircle(startX, startY, radius, lineWidth, style, solid, isErasing =
 function draw(event) {
     if (!isDrawing && !isDragging) return;
 
-    const X = event.clientX || (event.touches && event.touches[0].clientX);
-    const Y = event.clientY || (event.touches && event.touches[0].clientY);
+    const [X, Y] = getCoordinates(event);
     const [curX, curY] = adjustCoordinates(X, Y);
 
     if (isDrawing) {
@@ -407,14 +433,14 @@ function draw(event) {
             const [prevX, prevY] = [startX, startY];
 
             if (shape === "basicEraser") {
-                eraseBasic(prevX, prevY, curX, curY, lineWidth);
+                eraseBasic(prevX, prevY, curX, curY, eraserWidth);
 
                 // store
                 curDrawing.push({
                     shape: {
                         name: "basicEraser",
                         startX: prevX, startY: prevY, endX: curX, endY: curY,
-                        lineWidth: lineWidth,
+                        eraserWidth: eraserWidth,
                     }
                 });
             }
@@ -437,15 +463,14 @@ function draw(event) {
             top: translateY,
             behavior: 'auto'
         });
-
-        // bug: code working properly when undefined function is called. 
-        xyz();
+        console.error = function () { };
+        scrollHandler();
+        // getCoordinates();
 
         // Update the last position.
         startX = curX;
         startY = curY;
     }
-    // console.log(curDrawing);
 }
 
 // function to modify the current drawing array for objectEraser.
@@ -531,7 +556,7 @@ function repaintHandler(ratioWidth, ratioHeight) {
 
                 eraseBasic(shapeInfo.startX, shapeInfo.startY,
                     shapeInfo.endX, shapeInfo.endY,
-                    shapeInfo.lineWidth);
+                    shapeInfo.eraserWidth);
             }
         }
     }
@@ -575,7 +600,6 @@ function deletePageHandler() {
         prevPageButton.classList.add("hidden");
         deletePageButton.classList.add("hidden");
     }
-    console.log(curPageNo, pages.length);
 
     // last page cannot be deleted.
     if (pages.length === 1) return;
@@ -590,15 +614,9 @@ function deletePageHandler() {
     backgroundColor = pages[curPageNo].backgroundColor;
 
     // update the canvas.
+    dataPageNo.innerHTML = `${curPageNo + 1}/${pages.length}`;
     canvas.style.backgroundColor = backgroundColor;
     repaintHandler(1, 1);
-}
-
-// function to update the current page.
-function updateCurrentPageHandler() {
-    pages[curPageNo].drawnArray = drawnArray;
-    pages[curPageNo].redoArray = redoArray;
-    pages[curPageNo].backgroundColor = backgroundColor;
 }
 
 // function to clear the current page.
@@ -622,10 +640,11 @@ function nextAndAddPageHandler() {
     if (pages.length === 1) {
         deletePageButton.classList.remove("hidden");
     }
-    // console.log("next", curPageNo, pages.length);
 
     // update the current page.
-    updateCurrentPageHandler();
+    pages[curPageNo].drawnArray = drawnArray;
+    pages[curPageNo].redoArray = redoArray;
+    pages[curPageNo].backgroundColor = backgroundColor;
 
     // add new page.
     if (curPageNo === pages.length - 1) {
@@ -653,6 +672,7 @@ function nextAndAddPageHandler() {
     }
 
     // reset the canvas.
+    dataPageNo.innerHTML = `${curPageNo + 1}/${pages.length}`;
     repaintHandler(1, 1);
 }
 
@@ -663,18 +683,15 @@ function prevPageHandler() {
         prevPageButton.classList.add("hidden");
     }
     if (curPageNo === pages.length - 1) {
-        // nextAndAddPageButton
-        console.log(nextAndAddPageButton);
-        // console.log(nextAndAddPageButton?.children[0]);
         nextAndAddPageButton?.children[0].classList.remove("fa-plus");
         nextAndAddPageButton?.children[0]?.classList.add("fa-arrow-right");
-        // nextAndAddPageButton.innerHTML = "Next";
     }
 
-    // console.log("prev", curPageNo, pages.length);
 
     // update the current page.
-    updateCurrentPageHandler();
+    pages[curPageNo].drawnArray = drawnArray;
+    pages[curPageNo].redoArray = redoArray;
+    pages[curPageNo].backgroundColor = backgroundColor;
 
     // update the global variables.
     curPageNo--;
@@ -683,16 +700,20 @@ function prevPageHandler() {
     backgroundColor = pages[curPageNo].backgroundColor;
 
     // update the canvas.
+    dataPageNo.innerHTML = `${curPageNo + 1}/${pages.length}`;
     canvas.style.backgroundColor = backgroundColor;
     repaintHandler(1, 1);
 }
 
 // Function to resize the canvas.
 function resizeHandler() {
+    if ((canvas.width >= window.innerWidth && canvas.width >= 768 && window.innerWidth <= 767) ||
+        (canvas.width <= window.innerWidth && canvas.width <= 767 && window.innerWidth >= 768)) {
+        toggleListHandler(toggleList);
+    }
+
     const ratioWidth = window.innerWidth / canvas.width;
     const ratioHeight = window.innerHeight / canvas.height;
-
-    console.log("resizeHandler", ratioWidth, ratioHeight);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -704,8 +725,6 @@ function calculateZoom(event) {
     event.preventDefault();
 
     const zoomIn = (event.deltaY < 0) || (shape === "zoomIn");
-    console.log(zoomIn);
-
     if (zoomIn) {
         scaleFactor = Math.min(scaleFactor + zoomSpeed, 3);
     } else {
@@ -726,8 +745,8 @@ function scaleCanvas(scaleFactor, event) {
     }
     canvas.style.transform = `scale(${scaleFactor})`;
 
-
-    const [curX, curY] = adjustCoordinates(event.clientX, event.clientY);
+    const [X, Y] = getCoordinates(event);
+    const [curX, curY] = adjustCoordinates(X, Y);
     const translateX = (startX - curX) * scaleFactor;
     const translateY = (startY - curY) * scaleFactor;
 
@@ -758,72 +777,36 @@ function adjustCoordinates(x, y) {
     return [x, y];
 }
 
-
-// Add event listeners for drawing.
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('mouseout', stopDrawing);
-
-canvas.addEventListener('touchstart', startDrawing);
-canvas.addEventListener('touchmove', draw);
-canvas.addEventListener('touchend', stopDrawing);
-canvas.addEventListener('touchcancel', stopDrawing);
-window.addEventListener('resize', resizeHandler);
-canvas.addEventListener('click', zoomHandler);
-
-
-function saveImage() {
-    const dataURL = canvas.toDataURL('image/png');
-
-    // create a link.
-    const link = document.createElement('a');
-    link.href = dataURL;
-
-    link.download = 'image.png';
-    link.click();
-}
-
+// function to delete the note.
 function deleteNoteHandler(event) {
     const id = event.target.parentElement.parentElement.id;
 
     // delete the note.
     delete notes[id];
     document.getElementById(id).remove();
-
-    // console.log("deleteNoteHandler", event.target.parentElement.parentElement);
 }
 
-
+// function to minimise the note.
 function minimiseNoteHandler(event) {
     const textArea = event.target.parentElement.parentElement.children[1];
     textArea.classList.toggle('hidden');
-
-    // console.log("minimiseNoteHandler", event.target.parentElement.parentElement.children[1]);
 }
 
+// function to add a new note.
 function addNoteHandler() {
-    console.log("addNoteHandler", notes);
-
     const id = `data-note${noteNo}`;
-
     const newNote = dataNote.cloneNode(true);
     newNote.id = id;
     newNote.classList.remove('hidden');
 
     notes[id] = newNote;
-    // console.log(newNote.children);
-
     container.appendChild(notes[id]);
-
-    // console.log(container);
     noteNo++;
 }
 
+// function to handle the note drag.
 function startNoteDrag(event) {
     let target;
-    // console.log(event.target);
-
     // find the target element.
     if (event.target.id === 'container' || event.target.nodeName === 'CANVAS') {
         return;
@@ -838,29 +821,27 @@ function startNoteDrag(event) {
         target = event.target;
     }
 
-
     // update the z-index.
     target.style.zIndex = `${zIndexPriority++}`;
 
-
-    // console.log("target", target.classList);
+    // get the offset.
     const rect = target.getBoundingClientRect();
-    curNoteOffsetX = event.clientX - rect.left;
-    curNoteOffsetY = event.clientY - rect.top;
-
-    // console.log(curNoteOffsetX, curNoteOffsetY);
+    const [X, Y] = getCoordinates(event);
+    curNoteOffsetX = X - rect.left;
+    curNoteOffsetY = Y - rect.top;
 
     // get note id
     curNoteNo = target.id;
 }
 
-
+// function to handle the note drag.
 function noteDragHandler(event) {
     if (curNoteNo === '') return;
 
+    const [X, Y] = getCoordinates(event);
     const id = curNoteNo;
-    const x = event.clientX - curNoteOffsetX;
-    const y = event.clientY - curNoteOffsetY;
+    const x = X - curNoteOffsetX;
+    const y = Y - curNoteOffsetY;
 
     notes[id].style.left = `${x}px`;
     notes[id].style.top = `${y}px`;
@@ -870,10 +851,33 @@ function stopNoteDrag() {
     curNoteNo = '';
 }
 
+// function to save the image.
+function saveImage() {
+    const dataURL = canvas.toDataURL('image/png');
+
+    // create a link.
+    const link = document.createElement('a');
+    link.href = dataURL;
+
+    link.download = 'image.png';
+    link.click();
+}
+
+// Add event listeners for drawing.
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
+canvas.addEventListener('touchstart', startDrawing);
+canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchend', stopDrawing);
+canvas.addEventListener('touchcancel', stopDrawing);
 container.addEventListener('mousedown', startNoteDrag);
 container.addEventListener('mousemove', noteDragHandler);
 container.addEventListener('mouseup', stopNoteDrag);
-
 container.addEventListener('touchstart', startNoteDrag);
 container.addEventListener('touchmove', noteDragHandler);
 container.addEventListener('touchend', stopNoteDrag);
+
+window.addEventListener('resize', resizeHandler);
+canvas.addEventListener('click', zoomHandler);
