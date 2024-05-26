@@ -30,14 +30,14 @@
             xs:left-4 xs:translate-x-0 xs:flex-col xs:top-1/2 xs:-translate-y-1/2" data-aside>
 
             <!-- pen button -->
-            <button onclick="shapeAndToolHandler(`pen`, event)" class="bg-blue-400 text-white 
+            <button onclick="shapeAndToolHandler('pen', event)" class="bg-blue-400 text-white 
                 rounded-full px-2 py-1 hover:scale-110 transition-all" data-pen>
                 <i class="fa-solid fa-pen"></i>
             </button>
 
 
             <!-- Eraser button -->
-            <button onclick="toolbarOptionHandler(`eraser`)" class="relative">
+            <button onclick="toolbarOptionHandler('eraser')" class="relative">
                 <i class="fa-solid fa-eraser p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-eraserSibling></i>
 
@@ -45,9 +45,9 @@
                     flex-col rounded-xl shadow-custom xs:flex-row xs:-left-1/2 xs:-top-[2px] xs:items-center"
                     data-eraser>
 
-                    <i onclick="shapeAndToolHandler(`basicEraser`,event)"
+                    <i onclick="shapeAndToolHandler('basicEraser',event)"
                         class="fa-solid fa-eraser p-2 px-2 pt-3 xs:py-2 xs:pl-3 xs:pt-2"></i>
-                    <div onclick="shapeAndToolHandler(`objectEraser`,event)"
+                    <div onclick="shapeAndToolHandler('objectEraser',event)"
                         class="p-2 px-2 pb-3 xs:py-2 xs:pr-3 xs:pb-2">
                         <i class="fa-solid fa-eraser text-sm border-2 border-dashed border-blue-400 
                             rounded-full p-[2px]"></i>
@@ -58,26 +58,26 @@
 
 
             <!-- multiple shapes button -->
-            <button onclick="toolbarOptionHandler(`multipleShapes`)" class="relative">
+            <button onclick="toolbarOptionHandler('multipleShapes')" class="relative">
                 <i class="fa-solid fa-shapes p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-multipleShapes></i>
 
                 <div class="absolute -top-[200%] -left-[2px] bg-white text-blue-400 scale-0 shadow-custom flex  
                 rounded-xl flex-col xs:flex-row xs:-left-[200%] xs:-top-[2px] xs:items-center" data-ListOfShapes>
 
-                    <i onclick="shapeAndToolHandler(`straightLine`,event)"
+                    <i onclick="shapeAndToolHandler('straightLine',event)"
                         class="fa-solid fa-lines-leaning p-2 px-3 pt-3"></i>
-                    <i onclick="shapeAndToolHandler(`circle`,event)" class="fa-regular fa-circle p-2 px-1"></i>
-                    <i onclick="shapeAndToolHandler(`solidCircle`,event)" class="fa-solid fa-circle p-2 px-1"></i>
-                    <i onclick="shapeAndToolHandler(`rectangle`,event)" class="fa-regular fa-square p-2 px-3"></i>
-                    <i onclick="shapeAndToolHandler(`solidRectangle`,event)"
+                    <i onclick="shapeAndToolHandler('circle',event)" class="fa-regular fa-circle p-2 px-1"></i>
+                    <i onclick="shapeAndToolHandler('solidCircle',event)" class="fa-solid fa-circle p-2 px-1"></i>
+                    <i onclick="shapeAndToolHandler('rectangle',event)" class="fa-regular fa-square p-2 px-3"></i>
+                    <i onclick="shapeAndToolHandler('solidRectangle',event)"
                         class="fa-solid fa-square p-2 px-3 pb-3"></i>
                 </div>
             </button>
 
 
             <!-- Zoom button-->
-            <button onclick="toolbarOptionHandler(`zoom`)" class="relative">
+            <button onclick="toolbarOptionHandler('zoom')" class="relative">
                 <i class="fa-solid fa-magnifying-glass p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-zoom></i>
 
@@ -85,23 +85,23 @@
                     flex-col rounded-xl shadow-custom xs:flex-row xs:-left-1/2 xs:-top-[2px] xs:items-center"
                     data-zoomInOut>
 
-                    <i onclick="shapeAndToolHandler(`zoomIn`,event)"
+                    <i onclick="shapeAndToolHandler('zoomIn',event)"
                         class="fa-solid fa-magnifying-glass-plus p-2 px-3 pt-3"></i>
-                    <i onclick="shapeAndToolHandler(`zoomOut`,event)"
+                    <i onclick="shapeAndToolHandler('zoomOut',event)"
                         class="fa-solid fa-magnifying-glass-minus p-2 px-1"></i>
                 </div>
             </button>
 
 
             <!-- hand button-->
-            <button onclick="shapeAndToolHandler(`hand`,event)" class="bg-gray-200 text-blue-400 
+            <button onclick="shapeAndToolHandler('hand',event)" class="bg-gray-200 text-blue-400 
                 rounded-full px-2 py-1 hover:scale-110 transition-all" data-hand>
                 <i class="fa-solid fa-hand"></i>
             </button>
 
 
             <!-- pen-width slider -->
-            <button onclick="toolbarOptionHandler(`lineWidth`)" class="relative">
+            <button onclick="toolbarOptionHandler('lineWidth')" class="relative">
                 <i class="fa-solid fa-pen-ruler p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-strokeWidth></i>
 
@@ -114,7 +114,7 @@
 
 
             <!-- color picker button -->
-            <button onclick="toolbarOptionHandler(`colorPicker`)" class="relative">
+            <button onclick="toolbarOptionHandler('colorPicker')" class="relative">
                 <i class="fa-solid fa-palette p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-colorPickerSibling></i>
 
