@@ -1,28 +1,49 @@
 Q On screen resize the cursor and drawing pen were not in sync.
-To fix it i have add an event listener, so that when screen size changes 'resize' 
-it will update the values of canvas.width and canvas.height.
+        To fix it i have add an event listener, so that when screen size changes 'resize' 
+        it will update the values of canvas.width and canvas.height.
 
 Q How can I resize HTML canvas without losing content.
 
 Q On zoom the cursor and drawing pen were not in sync.what is getBoundingClientRect method.
 
-Q one menu of list(i.e ruler, multiple shapes, picker) should be down at a time.
+Q To implement a menu system where only one submenu (such as ruler, multiple shapes, picker) is open at a time.
+        When a user clicks on a menu button (e.g., "Ruler"), the corresponding submenu 
+        ("Ruler Options") will be shown. If another menu button (e.g., "Multiple Shapes") 
+        is clicked while the "Ruler Options" menu is open, the "Ruler Options" menu will 
+        be hidden and the "Shapes Options" menu will be displayed.
 
-Q Rectangle: coordinates, repaint every time on moving cursor.
 
-Q circle: repaint every time on moving cursor.
-Q line: repaint every time on moving cursor.
+Q Rectangle/Circle/straight line: To implement a feature where a rectangle is dynamically drawn and updated on a canvas as the cursor moves
+            Clear the canvas on each mousemove event to ensure only the current rectangle is visible, and 
+            draw the rectangle based on the updated coordinates.
 
-Q Eraser: color should be equal to background color.
-Q Line: line doesn't look good. -> linecap:"round" and linemilter:"round"
-Q colorPicker: It's shape was rectangle -> put it in a div & gave property like overflow hidden and rounded.
+Q Rectangle: To store rectangle properties(min(startX, endX), min(startY,endY), width, height).
 
-Q scroll: scrollBy change in coordinates. 
+Q stroke Eraser tool(basic): The eraser tool will essentially draw over existing content with the background color, effectively "erasing" it.
 
-Q resize: ratio
+Q Line/pen: It doesn't look good. To improve the appearance of the lines drawn with the pen tool, you can set the lineCap and lineJoin 
+            properties of the canvas context to "round".
 
-Q ZoomInOut: 
 
-Q Eraser(object): 
+Q colorPicker: It's(input: type="color") shape is rectangle by default -> put it in a div & gave property like overflow hidden and rounded.
 
-Q Drag Note: 
+
+Q scroll: scrollBy change in coordinates(prevCoord-curCoord). 
+
+
+Q resize: To handle this, i have to redraw the existing content after resizing(take ratio of window size = [curWidth/prevWidth, curHeight/prevHight]);
+
+Q ZoomInOut: To adjust the canvas's scaling and translation appropriately. This involves following steps
+            1. Calculate the zoom factor and adjust the scaling.
+            2. Translate the canvas view to keep the mouse position centered.
+
+Q Eraser(object): It refers to a tool or feature that allows users to selectively remove or erase parts of their artwork.
+Eraser(Object) Line: checks for intersection between two line segments (line1 and line2) by verifying if their respective endpoint pairs 
+                    (point1 and point2 for line1, point3 and point4 for line2) lie on opposite sides of each other's lines.
+
+Eraser(Object) Rectangle/circle solid/fill: Erase if atleast one of the points is inside circle/rectangle.
+Eraser(Object) Rectangle/circle stroke: Erase one of the points is inside circle/rectangle and other is outside.
+
+
+Q Drag Note: Using JavaScript event listeners (mousedown, mousemove, mouseup), it tracks mouse movements to adjust the position (left and top CSS properties) 
+            of the note relative to its initial click point, 

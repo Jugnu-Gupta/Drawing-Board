@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        'xs': { 'min': '0px', 'max': '767px' },
+        'xs': { 'min': '0px', 'max': '768px' },
       },
       boxShadow: {
         'custom': '0px 0px 4px rgba(0, 0, 0, 0.5)',

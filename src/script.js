@@ -564,6 +564,13 @@ function repaintHandler(ratioWidth, ratioHeight) {
 function undoHandler() {
     if (drawnArray.length === 0) return;
 
+    // display undo
+    const temp = dataTool.innerHTML;
+    dataTool.innerHTML = "Undo";
+    setTimeout(() => {
+        dataTool.innerHTML = temp;
+    }, 500);
+
     const undoItem = drawnArray.pop();
     redoArray.push(undoItem);
     if (undoItem[0]?.shape === "objectEraser") {
@@ -577,6 +584,13 @@ function undoHandler() {
 // Function to redo the last path.
 function redoHandler(event) {
     if (redoArray.length === 0) return;
+
+    // display redo
+    const temp = dataTool.innerHTML;
+    dataTool.innerHTML = "Redo";
+    setTimeout(() => {
+        dataTool.innerHTML = temp;
+    }, 500);
 
     const redoItem = redoArray.pop();
     drawnArray.push(redoItem);
@@ -905,6 +919,12 @@ document.querySelector('[data-saveImage]').addEventListener('click', saveImage);
 // undo/redo
 document.querySelector('[data-undo]').addEventListener('click', undoHandler);
 document.querySelector('[data-redo]').addEventListener('click', redoHandler);
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'z' && !e.shiftKey && !e.altKey && !e.metaKey) undoHandler();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'y' && !e.shiftKey && !e.altKey && !e.metaKey) redoHandler();
+});
 
 // Page
 deletePageButton.addEventListener('click', deletePageHandler);
