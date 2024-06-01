@@ -41,17 +41,17 @@
 
             <!-- pen button -->
             <button class="bg-blue-400 text-white 
-            rounded-full px-2 py-1 hover:scale-110 transition-all" data-pen>
+            rounded-full px-2 py-1 hover:scale-110 transition-all" title="Pen" data-pen>
                 <i class="fa-solid fa-pen "></i>
             </button>
 
 
             <!-- Eraser button -->
-            <button class="relative">
-                <i class="fa-solid fa-eraser p-2 rounded-full text-blue-400 bg-gray-200 
+            <button class="relative" title="Eraser">
+                <i title="Standard Eraser" class="fa-solid fa-eraser p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-eraserSibling></i>
 
-                <div class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 scale-0 flex
+                <div title="Stroke Eraser" class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 scale-0 flex
                     flex-col rounded-xl shadow-custom xs:flex-row xs:-left-1/2 xs:-top-[2px] xs:items-center"
                     data-eraser>
 
@@ -66,46 +66,46 @@
 
 
             <!-- multiple shapes button -->
-            <button class="relative">
+            <button class="relative" title="More Tools">
                 <i class="fa-solid fa-shapes p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-multipleShapes></i>
 
                 <div class="absolute -top-[200%] -left-[2px] bg-white text-blue-400 scale-0 shadow-custom flex  
                 rounded-xl flex-col xs:flex-row xs:-left-[200%] xs:-top-[2px] xs:items-center" data-ListOfShapes>
 
-                    <i class="fa-solid fa-lines-leaning p-2 px-3 pt-3" data-straightLine></i>
-                    <i class="fa-regular fa-circle p-2 px-1" data-circle></i>
-                    <i class="fa-solid fa-circle p-2 px-1" data-solidCirlce></i>
-                    <i class="fa-regular fa-square p-2 px-3" data-rectangle></i>
-                    <i class="fa-solid fa-square p-2 px-3 pb-3" data-solidRectangle></i>
+                    <i title="Straight Line" class="fa-solid fa-lines-leaning p-2 px-3 pt-3" data-straightLine></i>
+                    <i title="Circle Stroke" class="fa-regular fa-circle p-2 px-3" data-circle></i>
+                    <i title="Circle Fill" class="fa-solid fa-circle p-2 px-3" data-solidCirlce></i>
+                    <i title="Rectangle Stroke" class="fa-regular fa-square p-2 px-3" data-rectangle></i>
+                    <i title="Rectangle Fill" class="fa-solid fa-square p-2 px-3 pb-3" data-solidRectangle></i>
                 </div>
             </button>
 
 
             <!-- Zoom button-->
-            <button class="relative">
-                <i class="fa-solid fa-magnifying-glass p-2 rounded-full text-blue-400 bg-gray-200 
+            <button class="relative" title="Zoom">
+                <i title="Zoom In" class="fa-solid fa-magnifying-glass p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-zoom></i>
 
-                <div class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 scale-0 flex
+                <div title="Zoom Out" class="absolute -top-1/2 -left-[2px] bg-white text-blue-400 scale-0 flex
                     flex-col rounded-xl shadow-custom xs:flex-row xs:-left-1/2 xs:-top-[2px] xs:items-center"
                     data-zoomInOut>
 
-                    <i class="fa-solid fa-magnifying-glass-plus p-2 px-3 pt-3" data-zoomIn></i>
-                    <i class="fa-solid fa-magnifying-glass-minus p-2 px-1" data-zoomOut></i>
+                    <i class="fa-solid fa-magnifying-glass-plus p-3 pb-2 pt-3 xs:pl-3 xs:pr-2 xs:p-3" data-zoomIn></i>
+                    <i class="fa-solid fa-magnifying-glass-minus p-3 pt-2 pb-3 xs:pr-3 xs:pl-2 xs:p-3" data-zoomOut></i>
                 </div>
             </button>
 
 
             <!-- hand button-->
-            <button class="bg-gray-200 text-blue-400 
+            <button title="Hand" class="bg-gray-200 text-blue-400 
                 rounded-full px-2 py-1 hover:scale-110 transition-all" data-hand>
                 <i class="fa-solid fa-hand"></i>
             </button>
 
 
             <!-- pen-width slider -->
-            <button class="relative">
+            <button title="Width Selector" class="relative">
                 <i class="fa-solid fa-pen-ruler p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-strokeWidth></i>
 
@@ -118,11 +118,11 @@
 
 
             <!-- color picker button -->
-            <button class="relative">
+            <button title="Color Palette" class="relative">
                 <i class="fa-solid fa-palette p-2 rounded-full text-blue-400 bg-gray-200 
                     hover:scale-110 transition-all" data-colorPickerSibling></i>
 
-                <div class="absolute -top-2/3 -left-2/3 bg-white px-3 
+                <div title="Brush Color" class="absolute -top-2/3 -left-2/3 bg-white px-3 cursor-default
                     text-blue-400 rounded-xl scale-0 flex flex-col shadow-custom xs:-top-[90%]" data-colorPicker>
                     <!-- brush color -->
                     <div class="flex justify-between items-center gap-2 py-2">
@@ -134,7 +134,7 @@
                         </div>
                     </div>
                     <!-- background color -->
-                    <div class="flex justify-between items-center gap-2 pb-2">
+                    <div title="Background Color" class="flex justify-between items-center gap-2 pb-2">
                         <label for="backgroundColor" class="text-sm">
                             <i class="fa-solid fa-paint-roller"></i>
                         </label>
@@ -149,7 +149,7 @@
 
 
             <!-- note button -->
-            <button class="bg-gray-200 text-blue-400 
+            <button title="Note" class="bg-gray-200 text-blue-400 
                 rounded-full px-2 py-1 hover:scale-110 transition-all" data-addNote>
                 <i class="fa-solid fa-notes-medical "></i>
             </button>
@@ -200,12 +200,12 @@
         <div class="fixed z-[1000000] bottom-4 left-4 px-4 py-2 flex items-center gap-4 
             bg-white text-blue-400 rounded-xl shadow-custom">
             <!-- undo button -->
-            <button class="transition-all rounded-full bg-gray-200 
+            <button title="Undo" class="transition-all rounded-full bg-gray-200 
                 px-2 py-1 hover:scale-110 active:animate-anticlockwiseSpin" data-undo>
                 <i class="fa-solid fa-arrow-rotate-left"></i></button>
 
             <!-- redo button -->
-            <button class="transition-all rounded-full bg-gray-200 
+            <button title="Redo" class="transition-all rounded-full bg-gray-200 
                 px-2 py-1 hover:scale-110 active:animate-clockwiseSpin" data-redo>
                 <i class="fa-solid fa-arrow-rotate-right"></i></button>
         </div>
@@ -215,26 +215,26 @@
         <div class="fixed z-[1000000] bottom-4 right-4 px-4 py-2 flex items-center gap-4 
             bg-white text-blue-400 rounded-xl shadow-custom">
             <!-- delete button -->
-            <button class="hidden hover:scale-110 transition-all 
+            <button title="Delete Page" class="hidden hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-deletePageButton>
                 <i class="fa-solid fa-trash"></i></button>
 
             <!-- clear button -->
-            <button class="hover:scale-110 transition-all 
+            <button title="Clear Page" class="hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-clearPageButton>
                 <i class="fa-solid fa-broom text-[17px]"></i></button>
 
             <!-- prev button -->
-            <button class="hidden hover:scale-110 transition-all 
+            <button title="Previous Page" class="hidden hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-prevPageButton>
                 <i class="fa-solid fa-arrow-left text-[17px]"></i></button>
 
             <!-- current page number -->
-            <button class="hover:scale-110 transition-all rounded-full font-semibold
-                    bg-gray-200 px-2  p-1" data-pageNo>1/1</button>
+            <button title="Page No" class="hover:scale-110 transition-all rounded-full font-semibold
+                    bg-gray-200 px-2  p-1 cursor-default" data-pageNo>1/1</button>
 
             <!-- add/next button -->
-            <button class="hover:scale-110 transition-all 
+            <button title="Add Page" class="hover:scale-110 transition-all 
                 rounded-full bg-gray-200 px-2 py-1" data-nextAndAddPageButton>
                 <i class="fa-solid fa-plus text-[17px]"></i></button>
         </div>

@@ -1,3 +1,8 @@
+import cursorPenImg from './assets/pen2.png';
+import cursorEraserImg from './assets/eraser.png';
+import cursorZoomInImg from './assets/zoomIn.png';
+import cursorZoomOutImg from './assets/zoomOut.png';
+
 const dataPen = document.querySelector('[data-pen]');
 const dataEraser = document.querySelector('[data-eraser]');
 const dataEraserSibling = document.querySelector('[data-eraserSibling]');
@@ -28,6 +33,7 @@ const toolbarOptionsObject = {
 // Get the canvas element
 const canvas = document.querySelector(".canvas");
 const context = canvas.getContext("2d");
+canvas.style.cursor = `url(${cursorPenImg}) 0 32, auto`;
 context.imageSmoothingEnabled = true;
 context.imageSmoothingQuality = 'high';
 canvas.width = window.innerWidth;
@@ -140,23 +146,36 @@ function shapeAndToolHandler(shapeName, event) {
         else if (shape === "rectangle") dataTool.innerHTML = "Rectangle-stroke";
         else if (shape === "solidRectangle") dataTool.innerHTML = "Rectangle-fill";
         toolbarOption = "multipleShapes";
+
+        canvas.style.cursor = "crosshair";
     }
     else if (shape === "basicEraser" || shape === "objectEraser") {
         toolbarOptionColorHandler("eraser");
         dataTool.innerHTML = shape === "basicEraser" ? "Standard Eraser" : "Stroke Eraser";
         lineWidthSlider.value = eraserWidth;
         toolbarOption = "eraser";
+
+        canvas.style.cursor = `url(${cursorEraserImg}) 6 26, auto`;
     }
     else if (shape === "zoomIn" || shape === "zoomOut") {
         toolbarOptionColorHandler("zoom");
-        dataTool.innerHTML = shape === "zoomIn" ? "Zoom In" : "Zoom Out";
+        if (shape === "zoomIn") {
+            canvas.style.cursor = `url(${cursorZoomInImg}) 16 16, auto`;
+            dataTool.innerHTML = "Zoom In";
+        }
+        else {
+            canvas.style.cursor = `url(${cursorZoomOutImg}) 16 16, auto`;
+            dataTool.innerHTML = "Zoom Out";
+        }
         toolbarOption = "zoom";
     }
     else if (shape === "pen" || shape === "hand") {
         if (shape === "pen") {
+            canvas.style.cursor = `url(${cursorPenImg}) 0 32, auto`;
             lineWidthSlider.value = lineWidth;
             dataTool.innerHTML = "Pen";
         } else {
+            canvas.style.cursor = "pointer";
             dataTool.innerHTML = "Hand";
         }
         toolbarOptionHandler(shape);
@@ -607,6 +626,7 @@ function deletePageHandler() {
     if (curPageNo === pages.length - 2) {
         nextAndAddPageButton?.children[0].classList.add("fa-plus");
         nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
+        nextAndAddPageButton.title = "Add Page";
     }
     if (pages.length === 2) {
         prevPageButton.classList.add("hidden");
@@ -645,6 +665,7 @@ function nextAndAddPageHandler() {
     if (curPageNo === pages.length - 2) {
         nextAndAddPageButton?.children[0].classList.add("fa-plus");
         nextAndAddPageButton?.children[0]?.classList.remove("fa-arrow-right");
+        nextAndAddPageButton.title = "Add Page";
     }
     if (curPageNo === 0) {
         prevPageButton.classList.remove("hidden");
@@ -697,6 +718,7 @@ function prevPageHandler() {
     if (curPageNo === pages.length - 1) {
         nextAndAddPageButton?.children[0].classList.remove("fa-plus");
         nextAndAddPageButton?.children[0]?.classList.add("fa-arrow-right");
+        nextAndAddPageButton.title = "Next Page";
     }
 
 
@@ -783,7 +805,24 @@ function adjustCoordinates(x, y) {
     y = (y - rect.top) / scaleFactor;
 
     if (scaleFactor > 1) {
-        x += x * 0.02;
+        if (window.innerWidth <= 676) {
+            x += x * 0.03;
+        }
+        else if (window.innerWidth <= 768) {
+            x += x * 0.025;
+        }
+        else if (window.innerWidth <= 900) {
+            x += x * 0.02;
+        }
+        else if (window.innerWidth <= 1050) {
+            x += x * 0.018;
+        }
+        else if (window.innerWidth <= 1280) {
+            x += x * 0.015;
+        }
+        else {
+            x += x * 0.0125;
+        }
         y += y * 0.001;
     }
     return [x, y];
