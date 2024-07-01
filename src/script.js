@@ -932,6 +932,7 @@ document.querySelector('[data-objectEraser]').addEventListener('click', (event) 
 dataMultipleShapes.addEventListener('click', (event) => toolbarOptionHandler("multipleShapes"));
 document.querySelector('[data-straightLine]').addEventListener('click', (event) => shapeAndToolHandler("straightLine", event));
 document.querySelector('[data-circle]').addEventListener('click', (event) => shapeAndToolHandler("circle", event));
+document.querySelector('[data-solidCircle]').addEventListener('click', (event) => shapeAndToolHandler("solidCircle", event));
 document.querySelector('[data-rectangle]').addEventListener('click', (event) => shapeAndToolHandler("rectangle", event));
 document.querySelector('[data-solidRectangle]').addEventListener('click', (event) => shapeAndToolHandler("solidRectangle", event));
 
